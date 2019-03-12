@@ -16,6 +16,6 @@ dependencies {
     implementation "androidx.palette:palette:$androidSupportVersion"
     implementation "androidx.recyclerview:recyclerview:$androidSupportVersion"
     implementation "androidx.cardview:cardview:$androidSupportVersion"
-    implementation 'com.squareup.okhttp3:okhttp:3.1.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation files('libs/volley.jar')
 }
