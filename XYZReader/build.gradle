@@ -10,9 +10,10 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.android.material:material:1.0.0'
     implementation "androidx.legacy:legacy-support-v4:$androidSupportVersion"
     implementation "androidx.legacy:legacy-support-v13:$androidSupportVersion"
-    implementation "androidx.appcompat:appcompat:$androidSupportVersion"
+    implementation "androidx.appcompat:appcompat:1.0.2"
     implementation "androidx.palette:palette:$androidSupportVersion"
     implementation "androidx.recyclerview:recyclerview:$androidSupportVersion"
     implementation "androidx.cardview:cardview:$androidSupportVersion"
