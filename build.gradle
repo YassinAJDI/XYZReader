@@ -18,11 +18,6 @@ allprojects {
         google()
         jcenter()
     }
-
-    ext {
-        androidSupportVersion = '1.0.0'
-
-    }
 }
 
 task clean(type: Delete) {

@@ -176,10 +176,15 @@ public class ArticleListActivity extends AppCompatActivity implements
                                 + "<br/>" + " by "
                                 + mCursor.getString(ArticleLoader.Query.AUTHOR)));
             }
-            holder.thumbnailView.setImageUrl(
-                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
-                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
+//            holder.thumbnailView.setImageUrl(
+//                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
+//                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
+
             holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
+//            Glide.with(holder.thumbnailView.getContext()).clear(holder.thumbnailView);
+//            Glide.with(holder.thumbnailView.getContext())
+//                    .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
+//                    .into(holder.thumbnailView);
         }
 
         @Override

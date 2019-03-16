@@ -10,13 +10,22 @@ android {
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    def support_lib_version = '1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation "androidx.legacy:legacy-support-v4:$androidSupportVersion"
-    implementation "androidx.legacy:legacy-support-v13:$androidSupportVersion"
+    implementation "androidx.legacy:legacy-support-v4:$support_lib_version"
+    implementation "androidx.legacy:legacy-support-v13:$support_lib_version"
     implementation "androidx.appcompat:appcompat:1.0.2"
-    implementation "androidx.palette:palette:$androidSupportVersion"
-    implementation "androidx.recyclerview:recyclerview:$androidSupportVersion"
-    implementation "androidx.cardview:cardview:$androidSupportVersion"
+    implementation "androidx.palette:palette:$support_lib_version"
+    implementation "androidx.recyclerview:recyclerview:$support_lib_version"
+    implementation "androidx.cardview:cardview:$support_lib_version"
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    annotationProcessor 'androidx.annotation:annotation:1.0.2'
+
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation files('libs/volley.jar')
 }
