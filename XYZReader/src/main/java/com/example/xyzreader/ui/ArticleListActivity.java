@@ -24,6 +24,7 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
+import com.example.xyzreader.utils.UiUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -183,9 +184,6 @@ public class ArticleListActivity extends AppCompatActivity implements
                                 + "<br/>" + " by "
                                 + mCursor.getString(ArticleLoader.Query.AUTHOR)));
             }
-//            holder.thumbnailView.setImageUrl(
-//                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
-//                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
             holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
             GlideApp.with(holder.thumbnailView.getContext())
                     .asBitmap()
@@ -203,7 +201,7 @@ public class ArticleListActivity extends AppCompatActivity implements
                             // Generate palette synchronously
                             Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
                                 public void onGenerated(Palette p) {
-                                    Palette.Swatch swatch = p.getDarkMutedSwatch();
+                                    Palette.Swatch swatch = UiUtils.getDominantColor(p);
                                     if (swatch != null) {
                                         holder.itemView.setBackgroundColor(swatch.getRgb());
                                         holder.titleView.setTextColor(swatch.getTitleTextColor());
