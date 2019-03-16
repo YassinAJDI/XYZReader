@@ -10,10 +10,10 @@ public class UiUtils {
 
     public static Palette.Swatch getDominantColor(Palette palette) {
         Palette.Swatch result = palette.getDominantSwatch();
-        if (palette.getDarkVibrantSwatch() != null) {
-            result = palette.getDarkVibrantSwatch();
-        } else if (palette.getDarkMutedSwatch() != null) {
-            result = palette.getDarkMutedSwatch();
+        if (palette.getLightVibrantSwatch() != null) {
+            result = palette.getLightVibrantSwatch();
+        } else if (palette.getLightMutedSwatch() != null) {
+            result = palette.getLightMutedSwatch();
         }
         return result;
     }

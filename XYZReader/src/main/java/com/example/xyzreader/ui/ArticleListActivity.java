@@ -25,6 +25,7 @@ import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.utils.UiUtils;
+import com.google.android.material.card.MaterialCardView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -203,7 +204,9 @@ public class ArticleListActivity extends AppCompatActivity implements
                                 public void onGenerated(Palette p) {
                                     Palette.Swatch swatch = UiUtils.getDominantColor(p);
                                     if (swatch != null) {
-                                        holder.itemView.setBackgroundColor(swatch.getRgb());
+                                        MaterialCardView cardView = (MaterialCardView) holder.itemView;
+                                        cardView.setCardBackgroundColor(swatch.getRgb());
+                                        cardView.setStrokeColor(swatch.getRgb());
                                         holder.titleView.setTextColor(swatch.getTitleTextColor());
                                         holder.subtitleView.setTextColor(swatch.getBodyTextColor());
                                     }
