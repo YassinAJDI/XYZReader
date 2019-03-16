@@ -182,6 +182,7 @@ public class ArticleListActivity extends AppCompatActivity implements
             holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
             GlideApp.with(holder.thumbnailView.getContext())
                     .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
+                    .placeholder(R.color.photo_placeholder)
                     .into(holder.thumbnailView);
         }
 
