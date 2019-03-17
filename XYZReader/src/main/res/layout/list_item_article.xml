@@ -6,7 +6,6 @@
     android:layout_marginLeft="4dp"
     android:layout_marginTop="8dp"
     android:layout_marginRight="4dp"
-    android:layout_marginBottom="4dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
@@ -35,6 +34,7 @@
             android:paddingTop="8dp"
             android:paddingEnd="8dp"
             android:paddingBottom="4dp"
+            android:textColor="@android:color/white"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
 
         <TextView
@@ -46,6 +46,7 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:paddingBottom="8dp"
+            android:textColor="@color/ltgray"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
     </LinearLayout>
 

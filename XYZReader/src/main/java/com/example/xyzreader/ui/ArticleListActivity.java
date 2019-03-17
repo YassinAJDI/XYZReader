@@ -205,8 +205,8 @@ public class ArticleListActivity extends AppCompatActivity implements
                                         MaterialCardView cardView = (MaterialCardView) holder.itemView;
                                         cardView.setCardBackgroundColor(swatch.getRgb());
                                         cardView.setStrokeColor(swatch.getRgb());
-                                        holder.titleView.setTextColor(swatch.getTitleTextColor());
-                                        holder.subtitleView.setTextColor(swatch.getBodyTextColor());
+//                                        holder.titleView.setTextColor(swatch.getTitleTextColor());
+//                                        holder.subtitleView.setTextColor(swatch.getBodyTextColor());
                                     }
                                 }
                             });

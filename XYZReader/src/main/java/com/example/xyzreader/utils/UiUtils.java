@@ -14,10 +14,10 @@ public class UiUtils {
 
     public static Palette.Swatch getDominantColor(Palette palette) {
         Palette.Swatch result = palette.getDominantSwatch();
-        if (palette.getLightVibrantSwatch() != null) {
-            result = palette.getLightVibrantSwatch();
-        } else if (palette.getLightMutedSwatch() != null) {
-            result = palette.getLightMutedSwatch();
+        if (palette.getVibrantSwatch() != null) {
+            result = palette.getVibrantSwatch();
+        } else if (palette.getMutedSwatch() != null) {
+            result = palette.getMutedSwatch();
         }
         return result;
     }
