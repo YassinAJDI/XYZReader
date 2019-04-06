@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -136,15 +138,36 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     private void setupToolbar() {
-        if (getActivity() != null) {
-            Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-            getActivityCast().setSupportActionBar(toolbar);
-            if (getActivityCast().getSupportActionBar() != null) {
-                getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        getActivityCast().setSupportActionBar(toolbar);
+        if (getActivityCast().getSupportActionBar() != null) {
+            getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //                handleCollapsedToolbarTitle();
-            }
-        }
 
+            // inset the toolbar down by the status bar height
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                mRootView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                    @Override
+                    public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                        ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
+                        lpToolbar.topMargin += insets.getSystemWindowInsetTop();
+                        toolbar.setLayoutParams(lpToolbar);
+                        // clear this listener so insets aren't re-applied
+                        mRootView.setOnApplyWindowInsetsListener(null);
+                        return insets.consumeSystemWindowInsets();
+                    }
+                });
+            }
+//            ViewCompat.setOnApplyWindowInsetsListener(toolbar, new OnApplyWindowInsetsListener() {
+//                @Override
+//                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+//                    ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+//                    lpToolbar.topMargin += insets.getSystemWindowInsetTop();
+//                    toolbar.setLayoutParams(lpToolbar);
+//                    return insets.consumeSystemWindowInsets();
+//                }
+//            });
+        }
     }
 
 //    private void updateStatusBar() {
