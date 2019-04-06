@@ -1,7 +1,7 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:layout_height="match_parent">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"
@@ -24,4 +24,4 @@
     <!--android:contentDescription="@string/up"-->
     <!--android:src="@drawable/ic_arrow_back" />-->
     <!--</FrameLayout>-->
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>
