@@ -1,6 +1,7 @@
 package com.example.xyzreader.ui;
 
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -25,6 +26,7 @@ import androidx.viewpager.widget.ViewPager;
 public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String EXTRA_ARTICLE_ID = "EXTRA_ARTICLE_ID";
     private Cursor mCursor;
     private long mStartId;
 
@@ -82,6 +84,13 @@ public class ArticleDetailActivity extends AppCompatActivity
             }
         });
 
+        if (savedInstanceState == null) {
+            if (getIntent() != null && getIntent().getExtras() != null) {
+                mStartId = ItemsContract.Items.getItemId(Uri.parse(getIntent().getStringExtra(EXTRA_ARTICLE_ID)));
+                mSelectedItemId = mStartId;
+            }
+        }
+
 //        mUpButtonContainer = findViewById(R.id.up_container);
 //
 //        mUpButton = findViewById(R.id.action_up);
@@ -104,13 +113,6 @@ public class ArticleDetailActivity extends AppCompatActivity
 //                }
 //            });
 //        }
-
-        if (savedInstanceState == null) {
-            if (getIntent() != null && getIntent().getData() != null) {
-                mStartId = ItemsContract.Items.getItemId(getIntent().getData());
-                mSelectedItemId = mStartId;
-            }
-        }
     }
 
     @Override

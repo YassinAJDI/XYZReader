@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -145,15 +146,17 @@ public class ArticleListActivity extends AppCompatActivity implements
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
-            final ViewHolder vh = new ViewHolder(view);
+            final ViewHolder viewHolder = new ViewHolder(view);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))));
+                    Intent intent = new Intent(view.getContext(), ArticleDetailActivity.class);
+                    Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(viewHolder.getAdapterPosition()));
+                    intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_ID, articleUri.toString());
+                    startActivity(intent);
                 }
             });
-            return vh;
+            return viewHolder;
         }
 
         private Date parsePublishedDate() {
