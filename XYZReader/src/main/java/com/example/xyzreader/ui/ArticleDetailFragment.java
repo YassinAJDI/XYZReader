@@ -35,10 +35,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ShareCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.palette.graphics.Palette;
+import timber.log.Timber;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
@@ -125,6 +127,7 @@ public class ArticleDetailFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Timber.d("onCreateView");
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
         mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
@@ -148,10 +151,13 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     private void setupToolbar() {
+        Timber.d("setupToolbar");
         final Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         getActivityCast().setSupportActionBar(toolbar);
         if (getActivityCast().getSupportActionBar() != null) {
-            toolbar.invalidate();
+            Timber.d("Has toolbar");
+
+//            toolbar.invalidate();
             getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 //                handleCollapsedToolbarTitle();
@@ -159,17 +165,19 @@ public class ArticleDetailFragment extends Fragment implements
             // inset the toolbar down by the status bar height
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
                 final FrameLayout frameLayout = getActivity().findViewById(R.id.root);
+
                 frameLayout.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
                     @Override
                     public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
                         ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
-                        lpToolbar.topMargin += insets.getSystemWindowInsetTop();
+                        lpToolbar.topMargin = insets.getSystemWindowInsetTop();
                         toolbar.setLayoutParams(lpToolbar);
                         // clear this listener so insets aren't re-applied
                         frameLayout.setOnApplyWindowInsetsListener(null);
                         return insets.consumeSystemWindowInsets();
                     }
                 });
+                ViewCompat.requestApplyInsets(toolbar);
 //                mRootView
             }
 //            ViewCompat.setOnApplyWindowInsetsListener(toolbar, new OnApplyWindowInsetsListener() {
