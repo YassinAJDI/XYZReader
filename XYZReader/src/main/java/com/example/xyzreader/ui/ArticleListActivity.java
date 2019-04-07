@@ -236,7 +236,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         @Override
         public int getItemCount() {
-            return mCursor.getCount();
+            return (mCursor != null) ? mCursor.getCount() : 0;
         }
     }
 
