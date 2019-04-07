@@ -152,7 +152,7 @@ public class ArticleListActivity extends AppCompatActivity implements
                 public void onClick(View view) {
                     Intent intent = new Intent(view.getContext(), ArticleDetailActivity.class);
                     Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(viewHolder.getAdapterPosition()));
-                    intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_ID, articleUri.toString());
+                    intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_URI, articleUri.toString());
                     startActivity(intent);
                 }
             });

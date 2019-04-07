@@ -4,8 +4,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
@@ -19,6 +17,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.viewpager.widget.ViewPager;
+import timber.log.Timber;
 
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
@@ -26,7 +25,7 @@ import androidx.viewpager.widget.ViewPager;
 public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String EXTRA_ARTICLE_ID = "EXTRA_ARTICLE_ID";
+    public static final String EXTRA_ARTICLE_URI = "EXTRA_ARTICLE_URI";
     private Cursor mCursor;
     private long mStartId;
 
@@ -38,15 +37,22 @@ public class ArticleDetailActivity extends AppCompatActivity
     private MyPagerAdapter mPagerAdapter;
 
     @Override
+    protected void onDestroy() {
+        Timber.d("onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Timber.d("onCreate");
         setContentView(R.layout.activity_article_detail);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // Make window fullscreen
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+//            getWindow().getDecorView().setSystemUiVisibility(
+//                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+//                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 
 //            ViewGroup v = (ViewGroup) findViewById(R.id.root);
 //            v.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
@@ -60,33 +66,33 @@ public class ArticleDetailActivity extends AppCompatActivity
         LoaderManager.getInstance(this).initLoader(0, null, this);
 
         mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
-        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager = findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
 //        mPager.setPageMargin((int) TypedValue
 //                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
 //        mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
 
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                super.onPageScrollStateChanged(state);
-//                mUpButton.animate()
-//                        .alpha((state == ViewPager.SCROLL_STATE_IDLE) ? 1f : 0f)
-//                        .setDuration(300);
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (mCursor != null) {
-                    mCursor.moveToPosition(position);
-                }
-                mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
-            }
-        });
+//        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//                super.onPageScrollStateChanged(state);
+////                mUpButton.animate()
+////                        .alpha((state == ViewPager.SCROLL_STATE_IDLE) ? 1f : 0f)
+////                        .setDuration(300);
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                if (mCursor != null) {
+//                    mCursor.moveToPosition(position);
+//                }
+//                mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
+//            }
+//        });
 
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getExtras() != null) {
-                mStartId = ItemsContract.Items.getItemId(Uri.parse(getIntent().getStringExtra(EXTRA_ARTICLE_ID)));
+                mStartId = ItemsContract.Items.getItemId(Uri.parse(getIntent().getStringExtra(EXTRA_ARTICLE_URI)));
                 mSelectedItemId = mStartId;
             }
         }
@@ -163,16 +169,6 @@ public class ArticleDetailActivity extends AppCompatActivity
             mCursor.moveToPosition(position);
             return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID));
         }
-
-        @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            super.setPrimaryItem(container, position, object);
-            ArticleDetailFragment fragment = (ArticleDetailFragment) object;
-            if (fragment != null) {
-//                mSelectedItemUpButtonFloor = fragment.getUpButtonFloor();
-            }
-        }
-
 
         @Override
         public int getCount() {

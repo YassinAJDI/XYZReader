@@ -26,6 +26,9 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     annotationProcessor 'androidx.annotation:annotation:1.0.2'
 
+    // logging
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation files('libs/volley.jar')
 }

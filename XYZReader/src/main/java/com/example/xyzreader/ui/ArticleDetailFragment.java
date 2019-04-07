@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -85,6 +86,12 @@ public class ArticleDetailFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // Make window fullscreen
+            getActivity().getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        }
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             mItemId = getArguments().getLong(ARG_ITEM_ID);
@@ -141,22 +148,26 @@ public class ArticleDetailFragment extends Fragment implements
         final Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         getActivityCast().setSupportActionBar(toolbar);
         if (getActivityCast().getSupportActionBar() != null) {
+            toolbar.invalidate();
             getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 //                handleCollapsedToolbarTitle();
 
             // inset the toolbar down by the status bar height
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                mRootView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                final FrameLayout frameLayout =  getActivity().findViewById(R.id.root);
+                frameLayout.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
                     @Override
                     public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
                         ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
                         lpToolbar.topMargin += insets.getSystemWindowInsetTop();
                         toolbar.setLayoutParams(lpToolbar);
                         // clear this listener so insets aren't re-applied
-                        mRootView.setOnApplyWindowInsetsListener(null);
+                        frameLayout.setOnApplyWindowInsetsListener(null);
                         return insets.consumeSystemWindowInsets();
                     }
                 });
+//                mRootView
             }
 //            ViewCompat.setOnApplyWindowInsetsListener(toolbar, new OnApplyWindowInsetsListener() {
 //                @Override
@@ -169,6 +180,11 @@ public class ArticleDetailFragment extends Fragment implements
 //            });
         }
     }
+
+//    public static Toolbar getToolbar() {
+//
+//        return;
+//    }
 
 //    private void updateStatusBar() {
 //        int color = 0;
