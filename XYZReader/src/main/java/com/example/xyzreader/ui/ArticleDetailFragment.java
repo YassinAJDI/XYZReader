@@ -130,12 +130,25 @@ public class ArticleDetailFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Timber.d("onActivityCreated");
         setupToolbar();
         // In support library r8, calling initLoader for a fragment in a FragmentPagerAdapter in
         // the fragment's onCreate may cause the same LoaderManager to be dealt to multiple
         // fragments because their mIndex is -1 (haven't been added to the activity yet). Thus,
         // we do this in onActivityCreated.
         LoaderManager.getInstance(this).initLoader(0, null, this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Timber.d("onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Timber.d("onResume");
     }
 
     @Override
@@ -148,6 +161,12 @@ public class ArticleDetailFragment extends Fragment implements
     public void onDestroy() {
         Timber.d("onDestroy");
         super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        Timber.d("onDetach");
+        super.onDetach();
     }
 
     private void setupToolbar() {

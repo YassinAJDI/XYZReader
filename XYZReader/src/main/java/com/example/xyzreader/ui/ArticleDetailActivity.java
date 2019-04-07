@@ -44,29 +44,31 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         LoaderManager.getInstance(this).initLoader(0, null, this);
 
+        // Enable FragmentManager logging
+        FragmentManager.enableDebugLogging(true);
         mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         mPager = findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
 
 //        mPager.setOffscreenPageLimit(0);
 
-//        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//                super.onPageScrollStateChanged(state);
-////                mUpButton.animate()
-////                        .alpha((state == ViewPager.SCROLL_STATE_IDLE) ? 1f : 0f)
-////                        .setDuration(300);
-//            }
-//
-//            @Override
-//            public void onPageSelected(int position) {
-//                if (mCursor != null) {
-//                    mCursor.moveToPosition(position);
-//                }
-//                mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
-//            }
-//        });
+        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+//                mUpButton.animate()
+//                        .alpha((state == ViewPager.SCROLL_STATE_IDLE) ? 1f : 0f)
+//                        .setDuration(300);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (mCursor != null) {
+                    mCursor.moveToPosition(position);
+                }
+                mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
+            }
+        });
 
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getExtras() != null) {
