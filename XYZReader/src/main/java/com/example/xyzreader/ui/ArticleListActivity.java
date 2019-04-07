@@ -28,6 +28,8 @@ import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.utils.UiUtils;
 import com.google.android.material.card.MaterialCardView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -64,12 +66,6 @@ public class ArticleListActivity extends AppCompatActivity implements
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2, 1, 1);
 
     @Override
-    protected void onDestroy() {
-        Timber.d("onDestroy");
-        super.onDestroy();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
@@ -90,6 +86,12 @@ public class ArticleListActivity extends AppCompatActivity implements
                     new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(sglm);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Timber.d("onDestroy");
+        super.onDestroy();
     }
 
     private void refresh() {
@@ -125,18 +127,19 @@ public class ArticleListActivity extends AppCompatActivity implements
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
+    @NotNull
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+    public void onLoadFinished(@NotNull Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter.swapData(cursor);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NotNull Loader<Cursor> loader) {
         mRecyclerView.setAdapter(null);
     }
 
@@ -158,8 +161,9 @@ public class ArticleListActivity extends AppCompatActivity implements
             notifyDataSetChanged();
         }
 
+        @NotNull
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
             final ViewHolder viewHolder = new ViewHolder(view);
             view.setOnClickListener(new View.OnClickListener() {
