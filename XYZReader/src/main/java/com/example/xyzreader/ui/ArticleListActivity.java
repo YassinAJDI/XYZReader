@@ -72,20 +72,21 @@ public class ArticleListActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_article_list);
 
         mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
-
         mRecyclerView = findViewById(R.id.recycler_view);
-        LoaderManager.getInstance(this).initLoader(0, null, this);
+
+        mAdapter = new Adapter(null);
+        mAdapter.setHasStableIds(true);
+        mRecyclerView.setAdapter(mAdapter);
+        int columnCount = getResources().getInteger(R.integer.list_column_count);
+        StaggeredGridLayoutManager sglm =
+                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(sglm);
 
         if (savedInstanceState == null) {
             refresh();
-            mAdapter = new Adapter(null);
-            mAdapter.setHasStableIds(true);
-            mRecyclerView.setAdapter(mAdapter);
-            int columnCount = getResources().getInteger(R.integer.list_column_count);
-            StaggeredGridLayoutManager sglm =
-                    new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(sglm);
         }
+
+        LoaderManager.getInstance(this).initLoader(0, null, this);
     }
 
     @Override
