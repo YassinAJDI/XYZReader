@@ -97,7 +97,7 @@ public class ArticleDetailFragment extends Fragment implements
         }
 
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
-//        setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
     }
 
     public ArticleDetailActivity getActivityCast() {
@@ -108,7 +108,6 @@ public class ArticleDetailFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
-        setHasOptionsMenu(true);
 
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
         mPhotoView = mRootView.findViewById(R.id.photo);
@@ -121,23 +120,7 @@ public class ArticleDetailFragment extends Fragment implements
                         .getIntent(), getString(R.string.action_share)));
             }
         });
-        final Toolbar toolbar = mRootView.findViewById(R.id.toolbar);
-        getActivityCast().setSupportActionBar(toolbar);
-        getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Timber.d("onMenuItemClick");
-                return false;
-            }
-        });
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Timber.d("onClick");
-                NavUtils.navigateUpFromSameTask(getActivityCast());
-            }
-        });
+        setupToolbar();
         bindViews();
 //        updateStatusBar();
         return mRootView;
@@ -147,7 +130,6 @@ public class ArticleDetailFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Timber.d("onActivityCreated");
-        setupToolbar();
         // In support library r8, calling initLoader for a fragment in a FragmentPagerAdapter in
         // the fragment's onCreate may cause the same LoaderManager to be dealt to multiple
         // fragments because their mIndex is -1 (haven't been added to the activity yet). Thus,
@@ -207,17 +189,19 @@ public class ArticleDetailFragment extends Fragment implements
 
     private void setupToolbar() {
         Timber.d("setupToolbar");
-//        final Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-//        getActivityCast().setSupportActionBar(toolbar);
-//        getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final Toolbar toolbar = mRootView.findViewById(R.id.toolbar);
+        getActivityCast().setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Timber.d("onClick");
+                NavUtils.navigateUpFromSameTask(getActivityCast());
+            }
+        });
+
         if (getActivityCast().getSupportActionBar() != null) {
             Timber.d("Has toolbar");
-
-
-//            getActivityCast().setSupportActionBar(null);
-//            toolbar.invalidate();
-//            getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+            getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 //                handleCollapsedToolbarTitle();
 
@@ -248,10 +232,6 @@ public class ArticleDetailFragment extends Fragment implements
 //                    return insets.consumeSystemWindowInsets();
 //                }
 //            });
-        } else {
-            Timber.d("Doesn't have toolbar");
-//            getActivityCast().setSupportActionBar(toolbar);
-//            getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
     }

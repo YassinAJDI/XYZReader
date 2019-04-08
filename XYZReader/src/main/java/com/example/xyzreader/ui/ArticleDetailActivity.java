@@ -42,16 +42,11 @@ public class ArticleDetailActivity extends AppCompatActivity
         Timber.d("onCreate");
         setContentView(R.layout.activity_article_detail);
 
-        // toolbar
-//        final Toolbar toolbar = findViewById(R.id.toolbar);
-
         // Enable FragmentManager logging
         FragmentManager.enableDebugLogging(true);
         mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         mPager = findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
-
-//        mPager.setOffscreenPageLimit(0);
 
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
