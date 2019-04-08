@@ -42,7 +42,8 @@ public class ArticleDetailActivity extends AppCompatActivity
         Timber.d("onCreate");
         setContentView(R.layout.activity_article_detail);
 
-        LoaderManager.getInstance(this).initLoader(0, null, this);
+        // toolbar
+//        final Toolbar toolbar = findViewById(R.id.toolbar);
 
         // Enable FragmentManager logging
         FragmentManager.enableDebugLogging(true);
@@ -67,6 +68,7 @@ public class ArticleDetailActivity extends AppCompatActivity
                     mCursor.moveToPosition(position);
                 }
                 mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
+                Timber.d("onPageSelected ==> Article ID: %s", mSelectedItemId);
             }
         });
 
@@ -89,6 +91,8 @@ public class ArticleDetailActivity extends AppCompatActivity
 //                }
 //            });
 //        }
+
+        LoaderManager.getInstance(this).initLoader(0, null, this);
     }
 
     @Override
@@ -138,7 +142,9 @@ public class ArticleDetailActivity extends AppCompatActivity
         @Override
         public Fragment getItem(int position) {
             mCursor.moveToPosition(position);
-            return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID));
+            long articleId = mCursor.getLong(ArticleLoader.Query._ID);
+            Timber.d("getItem ==> Article ID: %s", articleId);
+            return ArticleDetailFragment.newInstance(articleId);
         }
 
         @Override

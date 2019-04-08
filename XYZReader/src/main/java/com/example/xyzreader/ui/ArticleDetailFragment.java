@@ -4,12 +4,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -33,6 +33,7 @@ import java.util.GregorianCalendar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
 import androidx.core.app.ShareCompat;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
@@ -84,12 +85,12 @@ public class ArticleDetailFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // make window fullscreen
-            getActivity().getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            // make window fullscreen
+//            getActivity().getWindow().getDecorView().setSystemUiVisibility(
+//                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+//                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+//        }
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             mItemId = getArguments().getLong(ARG_ITEM_ID);
@@ -108,10 +109,9 @@ public class ArticleDetailFragment extends Fragment implements
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
         setHasOptionsMenu(true);
+
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
-
         mPhotoView = mRootView.findViewById(R.id.photo);
-
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,7 +121,23 @@ public class ArticleDetailFragment extends Fragment implements
                         .getIntent(), getString(R.string.action_share)));
             }
         });
-
+        final Toolbar toolbar = mRootView.findViewById(R.id.toolbar);
+        getActivityCast().setSupportActionBar(toolbar);
+        getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Timber.d("onMenuItemClick");
+                return false;
+            }
+        });
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Timber.d("onClick");
+                NavUtils.navigateUpFromSameTask(getActivityCast());
+            }
+        });
         bindViews();
 //        updateStatusBar();
         return mRootView;
@@ -140,6 +156,19 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Timber.d("onOptionsItemSelected");
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                Timber.d("home up clicked");
+                NavUtils.navigateUpFromSameTask(getActivity());
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         Timber.d("onStart");
@@ -148,7 +177,14 @@ public class ArticleDetailFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
+//        setupToolbar();
         Timber.d("onResume");
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        setMenuVisibility(true);
     }
 
     @Override
@@ -171,14 +207,17 @@ public class ArticleDetailFragment extends Fragment implements
 
     private void setupToolbar() {
         Timber.d("setupToolbar");
-
-        final Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        getActivityCast().setSupportActionBar(toolbar);
+//        final Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+//        getActivityCast().setSupportActionBar(toolbar);
+//        getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if (getActivityCast().getSupportActionBar() != null) {
             Timber.d("Has toolbar");
 
+
+//            getActivityCast().setSupportActionBar(null);
 //            toolbar.invalidate();
-            getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//            getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 //                handleCollapsedToolbarTitle();
 
@@ -209,7 +248,12 @@ public class ArticleDetailFragment extends Fragment implements
 //                    return insets.consumeSystemWindowInsets();
 //                }
 //            });
+        } else {
+            Timber.d("Doesn't have toolbar");
+//            getActivityCast().setSupportActionBar(toolbar);
+//            getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
     }
 
     private Date parsePublishedDate() {
@@ -322,6 +366,6 @@ public class ArticleDetailFragment extends Fragment implements
     @Override
     public void onLoaderReset(@NonNull androidx.loader.content.Loader<Cursor> cursorLoader) {
         mCursor = null;
-        bindViews();
+//        bindViews();
     }
 }

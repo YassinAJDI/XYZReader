@@ -170,7 +170,9 @@ public class ArticleListActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(view.getContext(), ArticleDetailActivity.class);
-                    Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(viewHolder.getAdapterPosition()));
+                    int adapterPosition = viewHolder.getAdapterPosition();
+                    Timber.d("getAdapterPosition: " + adapterPosition);
+                    Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(adapterPosition));
                     intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_URI, articleUri.toString());
                     startActivity(intent);
                 }

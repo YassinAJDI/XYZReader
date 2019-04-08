@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -23,4 +23,4 @@
     <!--android:contentDescription="@string/up"-->
     <!--android:src="@drawable/ic_arrow_back" />-->
     <!--</FrameLayout>-->
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
