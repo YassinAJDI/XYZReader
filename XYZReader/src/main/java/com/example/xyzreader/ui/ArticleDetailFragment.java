@@ -4,14 +4,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,8 +34,10 @@ import java.util.GregorianCalendar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.NavUtils;
 import androidx.core.app.ShareCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
@@ -85,12 +88,12 @@ public class ArticleDetailFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            // make window fullscreen
-//            getActivity().getWindow().getDecorView().setSystemUiVisibility(
-//                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-//                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // make window fullscreen
+            getActivity().getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        }
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             mItemId = getArguments().getLong(ARG_ITEM_ID);
@@ -129,24 +132,12 @@ public class ArticleDetailFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Timber.d("onActivityCreated");
+
         // In support library r8, calling initLoader for a fragment in a FragmentPagerAdapter in
         // the fragment's onCreate may cause the same LoaderManager to be dealt to multiple
         // fragments because their mIndex is -1 (haven't been added to the activity yet). Thus,
         // we do this in onActivityCreated.
         LoaderManager.getInstance(this).initLoader(0, null, this);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Timber.d("onOptionsItemSelected");
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                Timber.d("home up clicked");
-                NavUtils.navigateUpFromSameTask(getActivity());
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -158,14 +149,7 @@ public class ArticleDetailFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-//        setupToolbar();
         Timber.d("onResume");
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        setMenuVisibility(true);
     }
 
     @Override
@@ -201,36 +185,25 @@ public class ArticleDetailFragment extends Fragment implements
         if (getActivityCast().getSupportActionBar() != null) {
             Timber.d("Has toolbar");
             getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 //                handleCollapsedToolbarTitle();
+        }
 
-            // inset the toolbar down by the status bar height
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-//                final FrameLayout frameLayout = getActivity().findViewById(R.id.root);
-//
-//                frameLayout.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-//                    @Override
-//                    public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-//                        ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
-//                        lpToolbar.topMargin = insets.getSystemWindowInsetTop();
-//                        toolbar.setLayoutParams(lpToolbar);
-//                        // clear this listener so insets aren't re-applied
-//                        frameLayout.setOnApplyWindowInsetsListener(null);
-//                        return insets.consumeSystemWindowInsets();
-//                    }
-//                });
-//                ViewCompat.requestApplyInsets(toolbar);
-////                mRootView
-//            }
-//            ViewCompat.setOnApplyWindowInsetsListener(toolbar, new OnApplyWindowInsetsListener() {
-//                @Override
-//                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-//                    ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-//                    lpToolbar.topMargin += insets.getSystemWindowInsetTop();
-//                    toolbar.setLayoutParams(lpToolbar);
-//                    return insets.consumeSystemWindowInsets();
-//                }
-//            });
+        // inset the toolbar down by the status bar height
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            final CoordinatorLayout coordinatorLayout = mRootView.findViewById(R.id.draw_insets_frame_layout);
+            coordinatorLayout.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                    Timber.d("onApplyWindowInsets");
+                    ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
+                    lpToolbar.topMargin = insets.getSystemWindowInsetTop();
+                    toolbar.setLayoutParams(lpToolbar);
+                    // clear this listener so insets aren't re-applied
+                    coordinatorLayout.setOnApplyWindowInsetsListener(null);
+                    return insets.consumeSystemWindowInsets();
+                }
+            });
+            ViewCompat.requestApplyInsets(toolbar);
         }
 
     }
