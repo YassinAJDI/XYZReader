@@ -23,6 +23,8 @@ import com.bumptech.glide.request.target.Target;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.utils.UiUtils;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -58,6 +60,7 @@ public class ArticleDetailFragment extends Fragment implements
     private Cursor mCursor;
     private long mItemId;
     private View mRootView;
+    private String mArticleTitle;
 
     private ImageView mPhotoView;
     private boolean mIsCard = false;
@@ -123,8 +126,9 @@ public class ArticleDetailFragment extends Fragment implements
                         .getIntent(), getString(R.string.action_share)));
             }
         });
-        setupToolbar();
+
         bindViews();
+        setupToolbar();
         return mRootView;
     }
 
@@ -185,7 +189,7 @@ public class ArticleDetailFragment extends Fragment implements
         if (getActivityCast().getSupportActionBar() != null) {
             Timber.d("Has toolbar");
             getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//                handleCollapsedToolbarTitle();
+            handleCollapsedToolbarTitle();
         }
 
         // inset the toolbar down by the status bar height
@@ -205,7 +209,34 @@ public class ArticleDetailFragment extends Fragment implements
             });
             ViewCompat.requestApplyInsets(toolbar);
         }
+    }
 
+    /**
+     * sets the title on the toolbar only if the toolbar is collapsed
+     */
+    private void handleCollapsedToolbarTitle() {
+        AppBarLayout appBarLayout = mRootView.findViewById(R.id.appbar);
+        final CollapsingToolbarLayout collapsingToolbar = mRootView.findViewById(R.id.collapsing_toolbar);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = true;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                // verify if the toolbar is completely collapsed and set the movie name as the title
+                if (scrollRange + verticalOffset == 0) {
+                    collapsingToolbar.setTitle(mArticleTitle);
+                    isShow = true;
+                } else if (isShow) {
+                    // display an empty string when toolbar is expanded
+                    collapsingToolbar.setTitle(" ");
+                    isShow = false;
+                }
+            }
+        });
     }
 
     private Date parsePublishedDate() {
@@ -236,7 +267,8 @@ public class ArticleDetailFragment extends Fragment implements
             mRootView.setAlpha(0);
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
-            titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
+            mArticleTitle = mCursor.getString(ArticleLoader.Query.TITLE);
+            titleView.setText(mArticleTitle);
             Date publishedDate = parsePublishedDate();
             if (!publishedDate.before(START_OF_EPOCH.getTime())) {
                 bylineView.setText(Html.fromHtml(
@@ -278,6 +310,7 @@ public class ArticleDetailFragment extends Fragment implements
                                     if (swatch != null) {
                                         mRootView.findViewById(R.id.meta_bar)
                                                 .setBackgroundColor(swatch.getRgb());
+                                        // TODO: 4/8/2019 apply palette colors for title and subtitle
 //                                        holder.titleView.setTextColor(swatch.getTitleTextColor());
 //                                        holder.subtitleView.setTextColor(swatch.getBodyTextColor());
                                     }
