@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowInsets;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,7 +38,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.NavUtils;
 import androidx.core.app.ShareCompat;
+import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
@@ -195,19 +196,27 @@ public class ArticleDetailFragment extends Fragment implements
         // inset the toolbar down by the status bar height
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             final CoordinatorLayout coordinatorLayout = mRootView.findViewById(R.id.draw_insets_frame_layout);
-            coordinatorLayout.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            ViewCompat.setOnApplyWindowInsetsListener(coordinatorLayout, new OnApplyWindowInsetsListener() {
                 @Override
-                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
                     Timber.d("onApplyWindowInsets");
                     ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
                     lpToolbar.topMargin = insets.getSystemWindowInsetTop();
                     toolbar.setLayoutParams(lpToolbar);
                     // clear this listener so insets aren't re-applied
-                    coordinatorLayout.setOnApplyWindowInsetsListener(null);
+                    v.setOnApplyWindowInsetsListener(null);
                     return insets.consumeSystemWindowInsets();
                 }
             });
-            ViewCompat.requestApplyInsets(toolbar);
+            ViewCompat.requestApplyInsets(coordinatorLayout);
+//            coordinatorLayout.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+//                @Override
+//                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+//
+//                    return ;
+//                }
+//            });
+
         }
     }
 

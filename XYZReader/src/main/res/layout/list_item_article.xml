@@ -17,11 +17,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!--suppress AndroidLintContentDescription -->
         <com.example.xyzreader.ui.DynamicHeightNetworkImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:transitionName="@string/article_photo_shared_transition"
             tools:background="@color/photo_placeholder" />
 
         <TextView
@@ -34,8 +34,8 @@
             android:paddingTop="8dp"
             android:paddingEnd="8dp"
             android:paddingBottom="4dp"
-            android:textColor="@android:color/white"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/article_subtitle"
@@ -46,8 +46,8 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:paddingBottom="8dp"
-            android:textColor="@color/ltgray"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@color/ltgray" />
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
