@@ -37,6 +37,7 @@ import java.util.GregorianCalendar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.palette.graphics.Palette;
@@ -167,17 +168,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         public ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
             final ViewHolder viewHolder = new ViewHolder(view);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(view.getContext(), ArticleDetailActivity.class);
-                    int adapterPosition = viewHolder.getAdapterPosition();
-                    Timber.d("getAdapterPosition: " + adapterPosition);
-                    Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(adapterPosition));
-                    intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_URI, articleUri.toString());
-                    startActivity(intent);
-                }
-            });
+
             return viewHolder;
         }
 
@@ -193,7 +184,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             mCursor.moveToPosition(position);
             holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
             Date publishedDate = parsePublishedDate();
@@ -210,6 +201,7 @@ public class ArticleListActivity extends AppCompatActivity implements
             GlideApp.with(holder.thumbnailView.getContext())
                     .asBitmap()
                     .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
+                    .dontAnimate()
                     .placeholder(R.color.photo_placeholder)
                     .apply(RequestOptions.bitmapTransform(new RoundedCorners(
                             (int) UiUtils.dipToPixels(holder.itemView.getContext(), 6))))
@@ -239,6 +231,22 @@ public class ArticleListActivity extends AppCompatActivity implements
                         }
                     })
                     .into(holder.thumbnailView);
+
+            // Article items click event
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int adapterPosition = holder.getAdapterPosition();
+                    Timber.d("AdapterPosition: " + adapterPosition);
+                    Intent intent = new Intent(view.getContext(), ArticleDetailActivity.class);
+                    Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(adapterPosition));
+                    intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_URI, articleUri.toString());
+//                    getString(R.string.article_photo_shared_transition)
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            ArticleListActivity.this, holder.thumbnailView, String.valueOf(getItemId(adapterPosition)));
+                    startActivity(intent, options.toBundle());
+                }
+            });
         }
 
         @Override

@@ -21,7 +21,6 @@
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:transitionName="@string/article_photo_shared_transition"
             tools:background="@color/photo_placeholder" />
 
         <TextView

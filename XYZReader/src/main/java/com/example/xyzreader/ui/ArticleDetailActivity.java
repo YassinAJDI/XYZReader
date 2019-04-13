@@ -2,7 +2,9 @@ package com.example.xyzreader.ui;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.TransitionInflater;
 import android.view.ViewGroup;
 
 import com.example.xyzreader.R;
@@ -40,6 +42,11 @@ public class ArticleDetailActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
+        supportPostponeEnterTransition();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setSharedElementEnterTransition(
+                    TransitionInflater.from(this).inflateTransition(android.R.transition.move));
+        }
         setContentView(R.layout.activity_article_detail);
 
         // Enable FragmentManager logging

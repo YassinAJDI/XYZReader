@@ -92,6 +92,10 @@ public class ArticleDetailFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
 
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
+//        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // make window fullscreen
             getActivity().getWindow().getDecorView().setSystemUiVisibility(
@@ -112,12 +116,16 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
-
+        postponeEnterTransition();
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
+        // Article picture shared transition
         mPhotoView = mRootView.findViewById(R.id.photo);
+        ViewCompat.setTransitionName(mPhotoView, String.valueOf(mItemId));
+
+        // Sharing fab button
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -268,7 +276,6 @@ public class ArticleDetailFragment extends Fragment implements
         TextView bylineView = mRootView.findViewById(R.id.article_byline);
         TextView bodyView = mRootView.findViewById(R.id.article_body);
 
-
         bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
         // TODO: 4/6/2019 improve this using fonts
@@ -288,7 +295,6 @@ public class ArticleDetailFragment extends Fragment implements
                                 + " by <font color='#ffffff'>"
                                 + mCursor.getString(ArticleLoader.Query.AUTHOR)
                                 + "</font>"));
-
             } else {
                 // If date is before 1902, just show the string
                 bylineView.setText(Html.fromHtml(
@@ -297,15 +303,20 @@ public class ArticleDetailFragment extends Fragment implements
                                 + "</font>"));
 
             }
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
+            bodyView.setText(Html.fromHtml(mCursor.getString(
+                    ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
 
             GlideApp.with(mPhotoView.getContext())
                     .asBitmap()
                     .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
+                    .dontAnimate()
+                    .dontTransform()
                     .placeholder(R.color.photo_placeholder)
                     .listener(new RequestListener<Bitmap>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+//                            startPostponedEnterTransition();
+                            getActivityCast().supportStartPostponedEnterTransition();
                             return false;
                         }
 
@@ -325,6 +336,8 @@ public class ArticleDetailFragment extends Fragment implements
                                     }
                                 }
                             });
+                            getActivityCast().supportStartPostponedEnterTransition();
+//                            startPostponedEnterTransition();
                             return false;
                         }
                     })

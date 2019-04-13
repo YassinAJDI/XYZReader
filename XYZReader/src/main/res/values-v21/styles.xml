@@ -2,7 +2,7 @@
 <resources>
 
     <style name="AppTheme" parent="BaseTheme">
-        // activate content transitions
+        <!-- enable window content transitions -->
         <item name="android:windowContentTransitions">true</item>
     </style>
 </resources>
