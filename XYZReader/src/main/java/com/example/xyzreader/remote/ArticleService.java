@@ -13,6 +13,6 @@ import retrofit2.http.GET;
  */
 public interface ArticleService {
 
-    @GET()
+    @GET("data.json")
     Call<List<Article>> getAllArticles();
 }

@@ -30,7 +30,7 @@ public class Article {
     private float aspect_ratio;
 
     @SerializedName("published_date")
-    private long published_date;
+    private String published_date;
 
     public long getId() {
         return id;
@@ -88,11 +88,11 @@ public class Article {
         this.aspect_ratio = aspect_ratio;
     }
 
-    public long getPublished_date() {
+    public String getPublished_date() {
         return published_date;
     }
 
-    public void setPublished_date(long published_date) {
+    public void setPublished_date(String published_date) {
         this.published_date = published_date;
     }
 }

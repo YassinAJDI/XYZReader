@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class ApiClient {
 
-    private static final String BASE_URL = "https://raw.githubusercontent.com/SuperAwesomeness/XYZReader/master/data.json";
+    private static final String BASE_URL = "https://raw.githubusercontent.com/SuperAwesomeness/XYZReader/master/";
 
     private static final OkHttpClient client;
 

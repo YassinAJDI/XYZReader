@@ -4,6 +4,7 @@ import com.example.xyzreader.data.model.Article;
 import com.example.xyzreader.remote.ArticleService;
 import com.example.xyzreader.utils.AppExecutors;
 
+import java.util.Collections;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
@@ -11,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 /**
  * @author Yassin Ajdi
@@ -48,14 +50,20 @@ public class ArticlesRepository {
             @Override
             public void onResponse(Call<List<Article>> call, Response<List<Article>> response) {
                 if (response.isSuccessful()) {
-                    List<Article> articleList = response.body();
+                    List<Article> data = response.body();
+                    List<Article> articleList = data != null ? data : Collections.<Article>emptyList();
+                    Timber.d("Parsing finished. number of articles: %s", articleList.size());
                     articleListLiveData.postValue(articleList);
+                } else {
+                    // TODO: 4/16/2019 handle errors here
+                    Timber.d("error code: %s", response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<List<Article>> call, Throwable t) {
                 // TODO: 4/16/2019 handle errors here
+                Timber.d("unknown error: %s", t.getMessage());
             }
         });
         return articleListLiveData;

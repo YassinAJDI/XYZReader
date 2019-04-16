@@ -1,49 +1,24 @@
 package com.example.xyzreader.ui.articlelist;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.example.xyzreader.R;
-import com.example.xyzreader.data.ArticleLoader;
-import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
+import com.example.xyzreader.data.model.Article;
 import com.example.xyzreader.ui.details.ArticleDetailActivity;
-import com.example.xyzreader.utils.DynamicHeightNetworkImageView;
-import com.example.xyzreader.ui.GlideApp;
-import com.example.xyzreader.utils.UiUtils;
-import com.google.android.material.card.MaterialCardView;
+import com.example.xyzreader.utils.Injection;
+import com.example.xyzreader.utils.ViewModelFactory;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
-import androidx.palette.graphics.Palette;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -55,13 +30,12 @@ import timber.log.Timber;
  * touched, lead to a {@link ArticleDetailActivity} representing item details. On tablets, the
  * activity presents a grid of items as cards.
  */
-public class ArticleListActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+public class ArticleListActivity extends AppCompatActivity {
 
     private static final String TAG = ArticleListActivity.class.toString();
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private RecyclerView mRecyclerView;
-    private Adapter mAdapter;
+
+    private ArticleListViewModel mViewModel;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -75,22 +49,43 @@ public class ArticleListActivity extends AppCompatActivity implements
         Timber.d("onCreate");
         setContentView(R.layout.activity_article_list);
 
+        mViewModel = obtainViewModel();
+        setupListAdapter();
         mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
-        mRecyclerView = findViewById(R.id.recycler_view);
 
-        mAdapter = new Adapter(null);
-        mAdapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(mAdapter);
+        if (savedInstanceState == null) {
+            updateRefreshingUI(true);
+//            refresh();
+        }
+
+//        LoaderManager.getInstance(this).initLoader(0, null, this);
+    }
+
+    private ArticleListViewModel obtainViewModel() {
+        ViewModelFactory factory = Injection.provideViewModelFactory(this);
+        return ViewModelProviders.of(this, factory).get(ArticleListViewModel.class);
+    }
+
+    private void setupListAdapter() {
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        final ArticlesAdapter adapter = new ArticlesAdapter(clickListener);
         int columnCount = getResources().getInteger(R.integer.list_column_count);
         StaggeredGridLayoutManager sglm =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(sglm);
+        recyclerView.setLayoutManager(sglm);
+        recyclerView.setAdapter(adapter);
 
-        if (savedInstanceState == null) {
-            refresh();
-        }
-
-        LoaderManager.getInstance(this).initLoader(0, null, this);
+        // observe articles list livedata
+        mViewModel.getArticlesListLiveData().observe(this, new Observer<List<Article>>() {
+            @Override
+            public void onChanged(List<Article> articles) {
+                if (articles != null) {
+                    Timber.d("articles: " + articles.size());
+                    updateRefreshingUI(false);
+                    adapter.submitList(articles);
+                }
+            }
+        });
     }
 
     @Override
@@ -106,168 +101,47 @@ public class ArticleListActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        registerReceiver(mRefreshingReceiver,
-                new IntentFilter(UpdaterService.BROADCAST_ACTION_STATE_CHANGE));
+//        registerReceiver(mRefreshingReceiver,
+//                new IntentFilter(UpdaterService.BROADCAST_ACTION_STATE_CHANGE));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        unregisterReceiver(mRefreshingReceiver);
+//        unregisterReceiver(mRefreshingReceiver);
     }
 
     private boolean mIsRefreshing = false;
 
-    private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
+//    private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
+//                mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
+//                updateRefreshingUI();
+//            }
+//        }
+//    };
+
+    private void updateRefreshingUI(boolean isRefreshing) {
+        mSwipeRefreshLayout.setRefreshing(isRefreshing);
+    }
+
+    public interface ArticleItemsClickListener {
+        void onClick(View sharedView, String sharedElementName);
+    }
+
+    public ArticleItemsClickListener clickListener = new ArticleItemsClickListener() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
-                mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
-                updateRefreshingUI();
-            }
+        public void onClick(View sharedView, String sharedElementName) {
+            Intent intent = new Intent(ArticleListActivity.this, ArticleDetailActivity.class);
+//                Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(adapterPosition));
+//                intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_URI, articleUri.toString());
+//                    getString(R.string.article_photo_shared_transition)
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    ArticleListActivity.this, sharedView, sharedElementName);
+            startActivity(intent, options.toBundle());
+
         }
     };
-
-    private void updateRefreshingUI() {
-        mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
-    }
-
-    @NotNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return ArticleLoader.newAllArticlesInstance(this);
-    }
-
-    @Override
-    public void onLoadFinished(@NotNull Loader<Cursor> cursorLoader, Cursor cursor) {
-        mAdapter.swapData(cursor);
-    }
-
-    @Override
-    public void onLoaderReset(@NotNull Loader<Cursor> loader) {
-        mRecyclerView.setAdapter(null);
-    }
-
-    private class Adapter extends RecyclerView.Adapter<ViewHolder> {
-        private Cursor mCursor;
-
-        public Adapter(Cursor cursor) {
-            mCursor = cursor;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            mCursor.moveToPosition(position);
-            return mCursor.getLong(ArticleLoader.Query._ID);
-        }
-
-        public void swapData(Cursor cursor) {
-            mCursor = cursor;
-            notifyDataSetChanged();
-        }
-
-        @NotNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
-            View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
-            final ViewHolder viewHolder = new ViewHolder(view);
-
-            return viewHolder;
-        }
-
-        private Date parsePublishedDate() {
-            try {
-                String date = mCursor.getString(ArticleLoader.Query.PUBLISHED_DATE);
-                return dateFormat.parse(date);
-            } catch (ParseException ex) {
-                Log.e(TAG, ex.getMessage());
-                Log.i(TAG, "passing today's date");
-                return new Date();
-            }
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, final int position) {
-            mCursor.moveToPosition(position);
-            holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
-            Date publishedDate = parsePublishedDate();
-            if (!publishedDate.before(START_OF_EPOCH.getTime())) {
-                holder.subtitleView.setText(Html.fromHtml(
-                        DateUtils.getRelativeTimeSpanString(
-                                publishedDate.getTime(),
-                                System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-                                DateUtils.FORMAT_ABBREV_ALL).toString()));
-            } else {
-                holder.subtitleView.setText(Html.fromHtml(outputFormat.format(publishedDate)));
-            }
-            holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
-            GlideApp.with(holder.thumbnailView.getContext())
-                    .asBitmap()
-                    .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
-                    .dontAnimate()
-                    .placeholder(R.color.photo_placeholder)
-                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(
-                            (int) UiUtils.dipToPixels(holder.itemView.getContext(), 6))))
-                    .listener(new RequestListener<Bitmap>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target,
-                                                       DataSource dataSource, boolean isFirstResource) {
-                            // Generate palette synchronously
-                            Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
-                                public void onGenerated(Palette p) {
-                                    Palette.Swatch swatch = UiUtils.getDominantColor(p);
-                                    if (swatch != null) {
-                                        MaterialCardView cardView = (MaterialCardView) holder.itemView;
-                                        cardView.setCardBackgroundColor(swatch.getRgb());
-                                        cardView.setStrokeColor(swatch.getRgb());
-//                                        holder.titleView.setTextColor(swatch.getTitleTextColor());
-//                                        holder.subtitleView.setTextColor(swatch.getBodyTextColor());
-                                    }
-                                }
-                            });
-                            return false;
-                        }
-                    })
-                    .into(holder.thumbnailView);
-
-            // Article items click event
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int adapterPosition = holder.getAdapterPosition();
-                    Timber.d("AdapterPosition: " + adapterPosition);
-                    Intent intent = new Intent(view.getContext(), ArticleDetailActivity.class);
-                    Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(adapterPosition));
-                    intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_URI, articleUri.toString());
-//                    getString(R.string.article_photo_shared_transition)
-                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            ArticleListActivity.this, holder.thumbnailView, String.valueOf(getItemId(adapterPosition)));
-                    startActivity(intent, options.toBundle());
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return (mCursor != null) ? mCursor.getCount() : 0;
-        }
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public DynamicHeightNetworkImageView thumbnailView;
-        public TextView titleView;
-        public TextView subtitleView;
-
-        public ViewHolder(View view) {
-            super(view);
-            thumbnailView = view.findViewById(R.id.thumbnail);
-            titleView = view.findViewById(R.id.article_title);
-            subtitleView = view.findViewById(R.id.article_subtitle);
-        }
-    }
 }
