@@ -1,4 +1,4 @@
-package com.example.xyzreader.ui;
+package com.example.xyzreader.ui.details;
 
 import android.database.Cursor;
 import android.net.Uri;

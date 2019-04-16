@@ -1,4 +1,4 @@
-package com.example.xyzreader.ui;
+package com.example.xyzreader;
 
 import android.app.Application;
 

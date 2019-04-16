@@ -1,4 +1,4 @@
-package com.example.xyzreader.ui;
+package com.example.xyzreader.ui.details;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -21,6 +21,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
+import com.example.xyzreader.ui.GlideApp;
+import com.example.xyzreader.ui.articlelist.ArticleListActivity;
 import com.example.xyzreader.utils.UiUtils;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
