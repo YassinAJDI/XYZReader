@@ -1,18 +1,35 @@
 package com.example.xyzreader.data.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * @author Yassin Ajdi
  * @since 4/16/2019.
  */
 public class Article {
 
+    @SerializedName("id")
     private long id;
+
+    @SerializedName("body")
     private String body;
+
+    @SerializedName("photo")
     private String photo_url;
+
+    @SerializedName("thumb")
     private String thumb_url;
+
+    @SerializedName("author")
     private String author;
+
+    @SerializedName("title")
     private String title;
+
+    @SerializedName("aspect_ratio")
     private float aspect_ratio;
+
+    @SerializedName("published_date")
     private long published_date;
 
     public long getId() {
