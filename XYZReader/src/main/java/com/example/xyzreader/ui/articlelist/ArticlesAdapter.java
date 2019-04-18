@@ -2,15 +2,15 @@ package com.example.xyzreader.ui.articlelist;
 
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.xyzreader.data.model.Article;
-import com.example.xyzreader.ui.articlelist.ArticleListActivity.ArticleItemsClickListener;
+import com.example.xyzreader.ui.articlelist.ArticleListFragment.ArticleItemsClickListener;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author Yassin Ajdi

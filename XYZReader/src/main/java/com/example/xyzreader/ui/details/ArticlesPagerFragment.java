@@ -1,6 +1,5 @@
 package com.example.xyzreader.ui.details;
 
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.xyzreader.R;
-import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.model.Article;
 import com.example.xyzreader.ui.ArticlesViewModel;
 import com.example.xyzreader.ui.HomeActivity;
@@ -34,6 +32,7 @@ public class ArticlesPagerFragment extends Fragment {
 
     private ArticlesViewModel mViewModel;
     private MyPagerAdapter mPagerAdapter;
+    private ViewPager mPager;
 
     public ArticlesPagerFragment() {
         // Required empty public constructor
@@ -52,13 +51,23 @@ public class ArticlesPagerFragment extends Fragment {
 
         mViewModel = HomeActivity.obtainViewModel(getActivity());
         setupPagerAdapter(view);
+        selectCurrentItem();
+    }
+
+    private void selectCurrentItem() {
+        mViewModel.getCurrentSelectedArticlePosition().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer selectedPosition) {
+                mPager.setCurrentItem(selectedPosition, false);
+            }
+        });
     }
 
     private void setupPagerAdapter(View view) {
         // Enable FragmentManager logging
         FragmentManager.enableDebugLogging(true);
         mPagerAdapter = new MyPagerAdapter(getFragmentManager());
-        ViewPager mPager = view.findViewById(R.id.pager);
+        mPager = view.findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
 
         mViewModel.getArticlesListLiveData().observe(getViewLifecycleOwner(), new Observer<List<Article>>() {
@@ -81,10 +90,9 @@ public class ArticlesPagerFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            mCursor.moveToPosition(position);
-            long articleId = mCursor.getLong(ArticleLoader.Query._ID);
-            Timber.d("getItem ==> Article ID: %s", articleId);
-            return ArticleDetailFragment.newInstance(articleId);
+            Article article = mArticleList.get(position);
+            Timber.d("getItem ==> Article ID: %s", article.getId());
+            return ArticleDetailFragment.newInstance(article);
         }
 
         @Override

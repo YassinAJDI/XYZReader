@@ -1,26 +1,37 @@
 package com.example.xyzreader.ui.details;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.NavUtils;
+import androidx.core.app.ShareCompat;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.xyzreader.R;
-import com.example.xyzreader.data.ArticleLoader;
+import com.example.xyzreader.data.model.Article;
+import com.example.xyzreader.databinding.FragmentArticleDetailBinding;
+import com.example.xyzreader.ui.HomeActivity;
 import com.example.xyzreader.ui.articlelist.ArticleListActivity;
 import com.example.xyzreader.utils.GlideApp;
 import com.example.xyzreader.utils.UiUtils;
@@ -34,19 +45,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.app.NavUtils;
-import androidx.core.app.ShareCompat;
-import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.Fragment;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
-import androidx.palette.graphics.Palette;
 import timber.log.Timber;
 
 /**
@@ -54,17 +52,12 @@ import timber.log.Timber;
  * either contained in a {@link ArticleListActivity} in two-pane mode (on
  * tablets) or a {@link ArticleDetailActivity} on handsets.
  */
-public class ArticleDetailFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String TAG = "ArticleDetailFragment";
+public class ArticleDetailFragment extends Fragment {
 
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_ARTICLE_DATA = "ARG_ARTICLE_DATA";
 
-    private Cursor mCursor;
-    private long mItemId;
-    private View mRootView;
-    private String mArticleTitle;
-
+    private FragmentArticleDetailBinding mBinding;
+    private Article mArticle;
     private ImageView mPhotoView;
     private boolean mIsCard = false;
 
@@ -81,9 +74,9 @@ public class ArticleDetailFragment extends Fragment implements
     public ArticleDetailFragment() {
     }
 
-    public static ArticleDetailFragment newInstance(long itemId) {
+    public static ArticleDetailFragment newInstance(Article article) {
         Bundle arguments = new Bundle();
-        arguments.putLong(ARG_ITEM_ID, itemId);
+        arguments.putParcelable(ARG_ARTICLE_DATA, article);
         ArticleDetailFragment fragment = new ArticleDetailFragment();
         fragment.setArguments(arguments);
         return fragment;
@@ -105,30 +98,35 @@ public class ArticleDetailFragment extends Fragment implements
                             View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         }
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            mItemId = getArguments().getLong(ARG_ITEM_ID);
-        }
-
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
         setHasOptionsMenu(true);
     }
 
-    public ArticleDetailActivity getActivityCast() {
-        return (ArticleDetailActivity) getActivity();
+    public HomeActivity getActivityCast() {
+        return (HomeActivity) getActivity();
     }
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
-        postponeEnterTransition();
-        mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
+//        postponeEnterTransition();
+        mBinding = FragmentArticleDetailBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (getArguments().containsKey(ARG_ARTICLE_DATA)) {
+            mArticle = getArguments().getParcelable(ARG_ARTICLE_DATA);
+        }
         // Article picture shared transition
-        mPhotoView = mRootView.findViewById(R.id.photo);
-        ViewCompat.setTransitionName(mPhotoView, String.valueOf(mItemId));
+        mPhotoView = view.findViewById(R.id.photo);
+//        ViewCompat.setTransitionName(mPhotoView, String.valueOf(mItemId));
 
         // Sharing fab button
-        mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
@@ -138,21 +136,14 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
-        bindViews();
         setupToolbar();
-        return mRootView;
+        populateUi();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Timber.d("onActivityCreated");
-
-        // In support library r8, calling initLoader for a fragment in a FragmentPagerAdapter in
-        // the fragment's onCreate may cause the same LoaderManager to be dealt to multiple
-        // fragments because their mIndex is -1 (haven't been added to the activity yet). Thus,
-        // we do this in onActivityCreated.
-        LoaderManager.getInstance(this).initLoader(0, null, this);
     }
 
     @Override
@@ -187,7 +178,7 @@ public class ArticleDetailFragment extends Fragment implements
 
     private void setupToolbar() {
         Timber.d("setupToolbar");
-        final Toolbar toolbar = mRootView.findViewById(R.id.toolbar);
+        final Toolbar toolbar = mBinding.toolbar;
         getActivityCast().setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,7 +196,7 @@ public class ArticleDetailFragment extends Fragment implements
 
         // inset the toolbar down by the status bar height
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-            final CoordinatorLayout coordinatorLayout = mRootView.findViewById(R.id.draw_insets_frame_layout);
+            final CoordinatorLayout coordinatorLayout = mBinding.drawInsetsFrameLayout;
             ViewCompat.setOnApplyWindowInsetsListener(coordinatorLayout, new OnApplyWindowInsetsListener() {
                 @Override
                 public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
@@ -219,14 +210,6 @@ public class ArticleDetailFragment extends Fragment implements
                 }
             });
             ViewCompat.requestApplyInsets(coordinatorLayout);
-//            coordinatorLayout.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-//                @Override
-//                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-//
-//                    return ;
-//                }
-//            });
-
         }
     }
 
@@ -234,8 +217,8 @@ public class ArticleDetailFragment extends Fragment implements
      * sets the title on the toolbar only if the toolbar is collapsed
      */
     private void handleCollapsedToolbarTitle() {
-        AppBarLayout appBarLayout = mRootView.findViewById(R.id.appbar);
-        final CollapsingToolbarLayout collapsingToolbar = mRootView.findViewById(R.id.collapsing_toolbar);
+        AppBarLayout appBarLayout = mBinding.appbar;
+        final CollapsingToolbarLayout collapsingToolbar = mBinding.collapsingToolbar;
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = true;
             int scrollRange = -1;
@@ -247,7 +230,7 @@ public class ArticleDetailFragment extends Fragment implements
                 }
                 // verify if the toolbar is completely collapsed and set the movie name as the title
                 if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbar.setTitle(mArticleTitle);
+                    collapsingToolbar.setTitle(mArticle.getTitle());
                     isShow = true;
                 } else if (isShow) {
                     // display an empty string when toolbar is expanded
@@ -260,121 +243,79 @@ public class ArticleDetailFragment extends Fragment implements
 
     private Date parsePublishedDate() {
         try {
-            String date = mCursor.getString(ArticleLoader.Query.PUBLISHED_DATE);
+            String date = mArticle.getPublished_date();
             return dateFormat.parse(date);
         } catch (ParseException ex) {
-            Log.e(TAG, ex.getMessage());
-            Log.i(TAG, "passing today's date");
+            Timber.e(ex);
+            Timber.e("passing today's date");
             return new Date();
         }
     }
 
-    private void bindViews() {
-        if (mRootView == null) {
-            return;
-        }
-
-        TextView titleView = mRootView.findViewById(R.id.article_title);
-        TextView bylineView = mRootView.findViewById(R.id.article_byline);
-        TextView bodyView = mRootView.findViewById(R.id.article_body);
-
-        bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
-
+    private void populateUi() {
+        mBinding.articleBody.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
         // TODO: 4/6/2019 improve this using fonts
-        if (mCursor != null) {
-            mRootView.setAlpha(0);
-            mRootView.setVisibility(View.VISIBLE);
-            mRootView.animate().alpha(1);
-            mArticleTitle = mCursor.getString(ArticleLoader.Query.TITLE);
-            titleView.setText(mArticleTitle);
-            Date publishedDate = parsePublishedDate();
-            if (!publishedDate.before(START_OF_EPOCH.getTime())) {
-                bylineView.setText(Html.fromHtml(
-                        DateUtils.getRelativeTimeSpanString(
-                                publishedDate.getTime(),
-                                System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-                                DateUtils.FORMAT_ABBREV_ALL).toString()
-                                + " by <font color='#ffffff'>"
-                                + mCursor.getString(ArticleLoader.Query.AUTHOR)
-                                + "</font>"));
-            } else {
-                // If date is before 1902, just show the string
-                bylineView.setText(Html.fromHtml(
-                        outputFormat.format(publishedDate) + " by <font color='#ffffff'>"
-                                + mCursor.getString(ArticleLoader.Query.AUTHOR)
-                                + "</font>"));
+//            mRootView.setAlpha(0);
+//            mRootView.setVisibility(View.VISIBLE);
+//            mRootView.animate().alpha(1);
+        // title
+        mBinding.articleTitle.setText(mArticle.getTitle());
+        // publish date
+        Date publishedDate = parsePublishedDate();
+        if (!publishedDate.before(START_OF_EPOCH.getTime())) {
+            mBinding.articleByline.setText(Html.fromHtml(
+                    DateUtils.getRelativeTimeSpanString(
+                            publishedDate.getTime(),
+                            System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
+                            DateUtils.FORMAT_ABBREV_ALL).toString()
+                            + " by <font color='#ffffff'>"
+                            + mArticle.getAuthor()
+                            + "</font>"));
+        } else {
+            // If date is before 1902, just show the string
+            mBinding.articleByline.setText(Html.fromHtml(
+                    outputFormat.format(publishedDate) + " by <font color='#ffffff'>"
+                            + mArticle.getAuthor()
+                            + "</font>"));
 
-            }
-            bodyView.setText(Html.fromHtml(mCursor.getString(
-                    ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
-
-            GlideApp.with(mPhotoView.getContext())
-                    .asBitmap()
-                    .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
-                    .dontAnimate()
-                    .dontTransform()
-                    .placeholder(R.color.photo_placeholder)
-                    .listener(new RequestListener<Bitmap>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+        }
+        // article body
+        mBinding.articleBody.setText(Html.fromHtml(mArticle.getBody().replaceAll("(\r\n|\n)", "<br />")));
+        // article image
+        GlideApp.with(mPhotoView.getContext())
+                .asBitmap()
+                .load(mArticle.getPhoto_url())
+                .dontAnimate()
+                .dontTransform()
+                .placeholder(R.color.photo_placeholder)
+                .listener(new RequestListener<Bitmap>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
 //                            startPostponedEnterTransition();
-                            getActivityCast().supportStartPostponedEnterTransition();
-                            return false;
-                        }
+//                        getActivityCast().supportStartPostponedEnterTransition();
+                        return false;
+                    }
 
-                        @Override
-                        public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target,
-                                                       DataSource dataSource, boolean isFirstResource) {
-                            // Generate palette synchronously
-                            Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
-                                public void onGenerated(Palette p) {
-                                    Palette.Swatch swatch = UiUtils.getDominantColor(p);
-                                    if (swatch != null) {
-                                        mRootView.findViewById(R.id.meta_bar)
-                                                .setBackgroundColor(swatch.getRgb());
-                                        // TODO: 4/8/2019 apply palette colors for title and subtitle
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target,
+                                                   DataSource dataSource, boolean isFirstResource) {
+                        // Generate palette synchronously
+                        Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
+                            public void onGenerated(Palette p) {
+                                Palette.Swatch swatch = UiUtils.getDominantColor(p);
+                                if (swatch != null) {
+                                    mBinding.metaBar.setBackgroundColor(swatch.getRgb());
+                                    // TODO: 4/8/2019 apply palette colors for title and subtitle
 //                                        holder.titleView.setTextColor(swatch.getTitleTextColor());
 //                                        holder.subtitleView.setTextColor(swatch.getBodyTextColor());
-                                    }
                                 }
-                            });
-                            getActivityCast().supportStartPostponedEnterTransition();
+                            }
+                        });
+//                        getActivityCast().supportStartPostponedEnterTransition();
 //                            startPostponedEnterTransition();
-                            return false;
-                        }
-                    })
-                    .into(mPhotoView);
-        }
-    }
-
-    @NotNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return ArticleLoader.newInstanceForItemId(getActivity(), mItemId);
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull androidx.loader.content.Loader<Cursor> loader, Cursor cursor) {
-        if (!isAdded()) {
-            if (cursor != null) {
-                cursor.close();
-            }
-            return;
-        }
-
-        mCursor = cursor;
-        if (mCursor != null && !mCursor.moveToFirst()) {
-            Log.e(TAG, "Error reading item detail cursor");
-            mCursor.close();
-            mCursor = null;
-        }
-
-        bindViews();
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull androidx.loader.content.Loader<Cursor> cursorLoader) {
-        mCursor = null;
-//        bindViews();
+                        return false;
+                    }
+                })
+                .into(mPhotoView);
     }
 }

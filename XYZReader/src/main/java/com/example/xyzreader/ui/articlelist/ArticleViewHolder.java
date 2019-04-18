@@ -19,7 +19,7 @@ import com.bumptech.glide.request.target.Target;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.model.Article;
 import com.example.xyzreader.databinding.ListItemArticleBinding;
-import com.example.xyzreader.ui.articlelist.ArticleListActivity.ArticleItemsClickListener;
+import com.example.xyzreader.ui.articlelist.ArticleListFragment.ArticleItemsClickListener;
 import com.example.xyzreader.utils.GlideApp;
 import com.example.xyzreader.utils.UiUtils;
 import com.google.android.material.card.MaterialCardView;
@@ -103,8 +103,8 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 int adapterPosition = getAdapterPosition();
-                Timber.d("Article Clicked at position: " + adapterPosition + " with ID of: "+article.getId());
-                listener.onClick(view, String.valueOf(article.getId()));
+                Timber.d("Article Clicked at position: " + adapterPosition + " with ID of: " + article.getId());
+                listener.onClick(view, String.valueOf(article.getId()), adapterPosition);
 
             }
         });

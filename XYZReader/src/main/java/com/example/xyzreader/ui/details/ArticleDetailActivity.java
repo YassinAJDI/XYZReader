@@ -7,12 +7,6 @@ import android.os.Bundle;
 import android.transition.TransitionInflater;
 import android.view.ViewGroup;
 
-import com.example.xyzreader.R;
-import com.example.xyzreader.data.ArticleLoader;
-import com.example.xyzreader.data.ItemsContract;
-
-import org.jetbrains.annotations.NotNull;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -21,6 +15,13 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.viewpager.widget.ViewPager;
+
+import com.example.xyzreader.R;
+import com.example.xyzreader.data.ArticleLoader;
+import com.example.xyzreader.data.ItemsContract;
+
+import org.jetbrains.annotations.NotNull;
+
 import timber.log.Timber;
 
 /**
@@ -146,7 +147,7 @@ public class ArticleDetailActivity extends AppCompatActivity
             mCursor.moveToPosition(position);
             long articleId = mCursor.getLong(ArticleLoader.Query._ID);
             Timber.d("getItem ==> Article ID: %s", articleId);
-            return ArticleDetailFragment.newInstance(articleId);
+            return ArticleDetailFragment.newInstance(null);
         }
 
         @Override

@@ -5,15 +5,11 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.UpdaterService;
-import com.example.xyzreader.data.model.Article;
 import com.example.xyzreader.ui.ArticlesViewModel;
 import com.example.xyzreader.ui.details.ArticleDetailActivity;
 import com.example.xyzreader.utils.Injection;
@@ -21,7 +17,6 @@ import com.example.xyzreader.utils.ViewModelFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import timber.log.Timber;
 
@@ -68,25 +63,25 @@ public class ArticleListActivity extends AppCompatActivity {
     }
 
     private void setupListAdapter() {
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        final ArticlesAdapter adapter = new ArticlesAdapter(clickListener);
-        int columnCount = getResources().getInteger(R.integer.list_column_count);
-        StaggeredGridLayoutManager sglm =
-                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(sglm);
-        recyclerView.setAdapter(adapter);
-
-        // observe articles list livedata
-        mViewModel.getArticlesListLiveData().observe(this, new Observer<List<Article>>() {
-            @Override
-            public void onChanged(List<Article> articles) {
-                if (articles != null) {
-                    Timber.d("articles: " + articles.size());
-                    updateRefreshingUI(false);
-                    adapter.submitList(articles);
-                }
-            }
-        });
+//        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+//        final ArticlesAdapter adapter = new ArticlesAdapter(clickListener);
+//        int columnCount = getResources().getInteger(R.integer.list_column_count);
+//        StaggeredGridLayoutManager sglm =
+//                new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
+//        recyclerView.setLayoutManager(sglm);
+//        recyclerView.setAdapter(adapter);
+//
+//        // observe articles list livedata
+//        mViewModel.getArticlesListLiveData().observe(this, new Observer<List<Article>>() {
+//            @Override
+//            public void onChanged(List<Article> articles) {
+//                if (articles != null) {
+//                    Timber.d("articles: " + articles.size());
+//                    updateRefreshingUI(false);
+//                    adapter.submitList(articles);
+//                }
+//            }
+//        });
     }
 
     @Override

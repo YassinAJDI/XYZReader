@@ -1,12 +1,15 @@
 package com.example.xyzreader.data.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Yassin Ajdi
  * @since 4/16/2019.
  */
-public class Article {
+public class Article implements Parcelable {
 
     @SerializedName("id")
     private long id;
@@ -31,6 +34,46 @@ public class Article {
 
     @SerializedName("published_date")
     private String published_date;
+
+    protected Article(Parcel in) {
+        id = in.readLong();
+        body = in.readString();
+        photo_url = in.readString();
+        thumb_url = in.readString();
+        author = in.readString();
+        title = in.readString();
+        aspect_ratio = in.readFloat();
+        published_date = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(body);
+        dest.writeString(photo_url);
+        dest.writeString(thumb_url);
+        dest.writeString(author);
+        dest.writeString(title);
+        dest.writeFloat(aspect_ratio);
+        dest.writeString(published_date);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Article> CREATOR = new Creator<Article>() {
+        @Override
+        public Article createFromParcel(Parcel in) {
+            return new Article(in);
+        }
+
+        @Override
+        public Article[] newArray(int size) {
+            return new Article[size];
+        }
+    };
 
     public long getId() {
         return id;

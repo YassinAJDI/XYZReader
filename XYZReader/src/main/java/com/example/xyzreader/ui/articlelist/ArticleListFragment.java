@@ -85,12 +85,13 @@ public class ArticleListFragment extends Fragment {
     }
 
     public interface ArticleItemsClickListener {
-        void onClick(View sharedView, String sharedElementName);
+        void onClick(View sharedView, String sharedElementName, int selectedPosition);
     }
 
-    public ArticleListActivity.ArticleItemsClickListener clickListener = new ArticleListActivity.ArticleItemsClickListener() {
+    public ArticleItemsClickListener clickListener = new ArticleItemsClickListener() {
         @Override
-        public void onClick(View sharedView, String sharedElementName) {
+        public void onClick(View sharedView, String sharedElementName, int selectedPosition) {
+
 //            Intent intent = new Intent(ArticleListActivity.this, ArticleDetailActivity.class);
 ////                Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(adapterPosition));
 ////                intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_URI, articleUri.toString());
@@ -98,10 +99,9 @@ public class ArticleListFragment extends Fragment {
 //            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
 //                    ArticleListActivity.this, sharedView, sharedElementName);
 //            startActivity(intent, options.toBundle());
-
+            mViewModel.setCurrentSelectedArticlePosition(selectedPosition);
             NavHostFragment.findNavController(ArticleListFragment.this)
                     .navigate(R.id.action_article_list_dest_to_articles_pager_dest);
-
         }
     };
 }
