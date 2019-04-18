@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
@@ -136,13 +135,13 @@ public class ArticleListActivity extends AppCompatActivity {
     public ArticleItemsClickListener clickListener = new ArticleItemsClickListener() {
         @Override
         public void onClick(View sharedView, String sharedElementName) {
-            Intent intent = new Intent(ArticleListActivity.this, ArticleDetailActivity.class);
-//                Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(adapterPosition));
-//                intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_URI, articleUri.toString());
-//                    getString(R.string.article_photo_shared_transition)
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    ArticleListActivity.this, sharedView, sharedElementName);
-            startActivity(intent, options.toBundle());
+//            Intent intent = new Intent(ArticleListActivity.this, ArticleDetailActivity.class);
+////                Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(adapterPosition));
+////                intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_URI, articleUri.toString());
+////                    getString(R.string.article_photo_shared_transition)
+//            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+//                    ArticleListActivity.this, sharedView, sharedElementName);
+//            startActivity(intent, options.toBundle());
 
         }
     };

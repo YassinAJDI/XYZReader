@@ -5,6 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.palette.graphics.Palette;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -19,10 +24,6 @@ import com.example.xyzreader.utils.GlideApp;
 import com.example.xyzreader.utils.UiUtils;
 import com.google.android.material.card.MaterialCardView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.palette.graphics.Palette;
-import androidx.recyclerview.widget.RecyclerView;
 import timber.log.Timber;
 
 /**
@@ -103,7 +104,7 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View view) {
                 int adapterPosition = getAdapterPosition();
                 Timber.d("Article Clicked at position: " + adapterPosition + " with ID of: "+article.getId());
-//                listener.onClick(view, String.valueOf(article.getId()));
+                listener.onClick(view, String.valueOf(article.getId()));
 
             }
         });

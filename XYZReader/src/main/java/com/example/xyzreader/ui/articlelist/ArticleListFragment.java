@@ -10,14 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.xyzreader.ui.ArticlesViewModel;
-import com.example.xyzreader.ui.HomeActivity;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.model.Article;
+import com.example.xyzreader.ui.ArticlesViewModel;
+import com.example.xyzreader.ui.HomeActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -67,7 +68,7 @@ public class ArticleListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         // observe articles list LiveData
-        mViewModel.getArticlesListLiveData().observe(this, new Observer<List<Article>>() {
+        mViewModel.getArticlesListLiveData().observe(getViewLifecycleOwner(), new Observer<List<Article>>() {
             @Override
             public void onChanged(List<Article> articles) {
                 if (articles != null) {
@@ -97,6 +98,9 @@ public class ArticleListFragment extends Fragment {
 //            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
 //                    ArticleListActivity.this, sharedView, sharedElementName);
 //            startActivity(intent, options.toBundle());
+
+            NavHostFragment.findNavController(ArticleListFragment.this)
+                    .navigate(R.id.action_article_list_dest_to_articles_pager_dest);
 
         }
     };
