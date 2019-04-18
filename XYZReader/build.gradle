@@ -57,6 +57,4 @@ dependencies {
 
     // logging
     implementation 'com.jakewharton.timber:timber:4.7.1'
-
-    implementation files('libs/volley.jar')
 }

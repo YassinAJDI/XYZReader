@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
 
@@ -22,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import timber.log.Timber;
-
 
 /**
  * A simple {@link Fragment} subclass, representing a single Article detail screen, letting you swipe between articles
@@ -31,7 +28,7 @@ import timber.log.Timber;
 public class ArticlesPagerFragment extends Fragment {
 
     private ArticlesViewModel mViewModel;
-    private MyPagerAdapter mPagerAdapter;
+    private ArticlesPagerAdapter mPagerAdapter;
     private ViewPager mPager;
 
     public ArticlesPagerFragment() {
@@ -66,7 +63,7 @@ public class ArticlesPagerFragment extends Fragment {
     private void setupPagerAdapter(View view) {
         // Enable FragmentManager logging
         FragmentManager.enableDebugLogging(true);
-        mPagerAdapter = new MyPagerAdapter(getFragmentManager());
+        mPagerAdapter = new ArticlesPagerAdapter(getFragmentManager());
         mPager = view.findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
 
@@ -78,36 +75,5 @@ public class ArticlesPagerFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private class MyPagerAdapter extends FragmentStatePagerAdapter {
-
-        private List<Article> mArticleList;
-
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Article article = mArticleList.get(position);
-            Timber.d("getItem ==> Article ID: %s", article.getId());
-            return ArticleDetailFragment.newInstance(article);
-        }
-
-        @Override
-        public int getCount() {
-            return mArticleList != null ? mArticleList.size() : 0;
-        }
-
-        @Override
-        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            super.destroyItem(container, position, object);
-        }
-
-        public void submitList(List<Article> articles) {
-            mArticleList = articles;
-            notifyDataSetChanged();
-        }
     }
 }
