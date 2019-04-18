@@ -1,7 +1,7 @@
 package com.example.xyzreader.utils;
 
 import com.example.xyzreader.data.ArticlesRepository;
-import com.example.xyzreader.ui.articlelist.ArticleListViewModel;
+import com.example.xyzreader.ui.ArticlesViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -26,9 +26,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (modelClass.isAssignableFrom(ArticleListViewModel.class)) {
+        if (modelClass.isAssignableFrom(ArticlesViewModel.class)) {
             //noinspection unchecked
-            return (T) new ArticleListViewModel(repository);
+            return (T) new ArticlesViewModel(repository);
         }
         throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass.getName());
     }

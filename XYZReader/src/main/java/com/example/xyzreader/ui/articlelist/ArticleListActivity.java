@@ -4,9 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.data.model.Article;
+import com.example.xyzreader.ui.ArticlesViewModel;
 import com.example.xyzreader.ui.details.ArticleDetailActivity;
 import com.example.xyzreader.utils.Injection;
 import com.example.xyzreader.utils.ViewModelFactory;
@@ -15,13 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import timber.log.Timber;
 
 /**
@@ -35,7 +37,7 @@ public class ArticleListActivity extends AppCompatActivity {
     private static final String TAG = ArticleListActivity.class.toString();
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private ArticleListViewModel mViewModel;
+    private ArticlesViewModel mViewModel;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -61,9 +63,9 @@ public class ArticleListActivity extends AppCompatActivity {
 //        LoaderManager.getInstance(this).initLoader(0, null, this);
     }
 
-    private ArticleListViewModel obtainViewModel() {
+    private ArticlesViewModel obtainViewModel() {
         ViewModelFactory factory = Injection.provideViewModelFactory(this);
-        return ViewModelProviders.of(this, factory).get(ArticleListViewModel.class);
+        return ViewModelProviders.of(this, factory).get(ArticlesViewModel.class);
     }
 
     private void setupListAdapter() {

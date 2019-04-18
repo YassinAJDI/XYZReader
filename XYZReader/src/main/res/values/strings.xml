@@ -10,4 +10,7 @@
     <string name="up">Up</string>
     <string name="article_photo_shared_transition">article_photo_shared_transition</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
