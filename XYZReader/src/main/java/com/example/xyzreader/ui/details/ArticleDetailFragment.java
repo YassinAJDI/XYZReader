@@ -16,12 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.app.NavUtils;
 import androidx.core.app.ShareCompat;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.load.DataSource;
@@ -183,8 +183,8 @@ public class ArticleDetailFragment extends Fragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Timber.d("onClick");
-                NavUtils.navigateUpFromSameTask(getActivityCast());
+                Timber.d("Navigation Up Click");
+                NavHostFragment.findNavController(ArticleDetailFragment.this).navigateUp();
             }
         });
 
