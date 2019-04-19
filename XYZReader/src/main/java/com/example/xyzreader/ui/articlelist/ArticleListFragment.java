@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -19,6 +20,7 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.model.Article;
 import com.example.xyzreader.ui.ArticlesViewModel;
 import com.example.xyzreader.ui.HomeActivity;
+import com.example.xyzreader.ui.details.ArticlesPagerFragment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +30,10 @@ import timber.log.Timber;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass, representing a list of Articles. This fragment has different
+ * presentations for handset and tablet-size devices. On handsets, the fragment presents a list of
+ * items, which when touched, lead to a {@link ArticlesPagerFragment} representing item details. On tablets, the
+ * fragment presents a grid of items as cards.
  */
 public class ArticleListFragment extends Fragment {
 
@@ -99,9 +104,18 @@ public class ArticleListFragment extends Fragment {
 //            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
 //                    ArticleListActivity.this, sharedView, sharedElementName);
 //            startActivity(intent, options.toBundle());
+            // save current selected article inside viewmodel
             mViewModel.setCurrentSelectedArticlePosition(selectedPosition);
-            NavHostFragment.findNavController(ArticleListFragment.this)
-                    .navigate(R.id.action_article_list_dest_to_articles_pager_dest);
+            // add shared element transitions extras
+            FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
+                    .addSharedElement(sharedView, sharedElementName)
+                    .build();
+            // navigate to destination & pass shared element
+            NavHostFragment.findNavController(ArticleListFragment.this).navigate(
+                    R.id.action_article_list_dest_to_articles_pager_dest,
+                    null,
+                    null,
+                    extras);
         }
     };
 }

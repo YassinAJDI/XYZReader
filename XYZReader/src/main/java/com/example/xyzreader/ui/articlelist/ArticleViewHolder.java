@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,6 +53,7 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindTo(final Article article) {
+        // title
         binding.articleTitle.setText(article.getTitle());
 //        Date publishedDate = parsePublishedDate();
 //        if (!publishedDate.before(START_OF_EPOCH.getTime())) {
@@ -63,7 +65,10 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
 //        } else {
 //            holder.subtitleView.setText(Html.fromHtml(outputFormat.format(publishedDate)));
 //        }
+        // article thumbnail
         binding.thumbnail.setAspectRatio(article.getAspect_ratio());
+        // Set the string value of the article id as the unique transition name for the view.
+        ViewCompat.setTransitionName(binding.thumbnail, String.valueOf(article.getId()));
         GlideApp.with(binding.getRoot().getContext())
                 .asBitmap()
                 .load(article.getThumb_url())
@@ -104,8 +109,7 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View view) {
                 int adapterPosition = getAdapterPosition();
                 Timber.d("Article Clicked at position: " + adapterPosition + " with ID of: " + article.getId());
-                listener.onClick(view, String.valueOf(article.getId()), adapterPosition);
-
+                listener.onClick(binding.thumbnail, String.valueOf(article.getId()), adapterPosition);
             }
         });
 

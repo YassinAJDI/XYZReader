@@ -10,7 +10,6 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,7 +57,6 @@ public class ArticleDetailFragment extends Fragment {
 
     private FragmentArticleDetailBinding mBinding;
     private Article mArticle;
-    private ImageView mPhotoView;
     private boolean mIsCard = false;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
@@ -87,15 +85,15 @@ public class ArticleDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
-//        }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // make window fullscreen
             getActivity().getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
                             View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        }
+
+        if (getArguments().containsKey(ARG_ARTICLE_DATA)) {
+            mArticle = getArguments().getParcelable(ARG_ARTICLE_DATA);
         }
 
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
@@ -110,23 +108,18 @@ public class ArticleDetailFragment extends Fragment {
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
-//        postponeEnterTransition();
         mBinding = FragmentArticleDetailBinding.inflate(inflater, container, false);
+        // Article picture shared transition
+        ViewCompat.setTransitionName(mBinding.photo, String.valueOf(mArticle.getId()));
         return mBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (getArguments().containsKey(ARG_ARTICLE_DATA)) {
-            mArticle = getArguments().getParcelable(ARG_ARTICLE_DATA);
-        }
-        // Article picture shared transition
-        mPhotoView = view.findViewById(R.id.photo);
-//        ViewCompat.setTransitionName(mPhotoView, String.valueOf(mItemId));
 
         // Sharing fab button
-        view.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
+        mBinding.shareFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
@@ -254,10 +247,6 @@ public class ArticleDetailFragment extends Fragment {
 
     private void populateUi() {
         mBinding.articleBody.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
-        // TODO: 4/6/2019 improve this using fonts
-//            mRootView.setAlpha(0);
-//            mRootView.setVisibility(View.VISIBLE);
-//            mRootView.animate().alpha(1);
         // title
         mBinding.articleTitle.setText(mArticle.getTitle());
         // publish date
@@ -282,7 +271,7 @@ public class ArticleDetailFragment extends Fragment {
         // article body
         mBinding.articleBody.setText(Html.fromHtml(mArticle.getBody().replaceAll("(\r\n|\n)", "<br />")));
         // article image
-        GlideApp.with(mPhotoView.getContext())
+        GlideApp.with(this)
                 .asBitmap()
                 .load(mArticle.getPhoto_url())
                 .dontAnimate()
@@ -291,14 +280,14 @@ public class ArticleDetailFragment extends Fragment {
                 .listener(new RequestListener<Bitmap>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-//                            startPostponedEnterTransition();
-//                        getActivityCast().supportStartPostponedEnterTransition();
+                        getParentFragment().startPostponedEnterTransition();
                         return false;
                     }
 
                     @Override
                     public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target,
                                                    DataSource dataSource, boolean isFirstResource) {
+                        getParentFragment().startPostponedEnterTransition();
                         // Generate palette synchronously
                         Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
                             public void onGenerated(Palette p) {
@@ -306,16 +295,16 @@ public class ArticleDetailFragment extends Fragment {
                                 if (swatch != null) {
                                     mBinding.metaBar.setBackgroundColor(swatch.getRgb());
                                     // TODO: 4/8/2019 apply palette colors for title and subtitle
+
 //                                        holder.titleView.setTextColor(swatch.getTitleTextColor());
 //                                        holder.subtitleView.setTextColor(swatch.getBodyTextColor());
                                 }
                             }
                         });
-//                        getActivityCast().supportStartPostponedEnterTransition();
-//                            startPostponedEnterTransition();
                         return false;
                     }
                 })
-                .into(mPhotoView);
+                .into(mBinding.photo);
+        mBinding.executePendingBindings();
     }
 }
