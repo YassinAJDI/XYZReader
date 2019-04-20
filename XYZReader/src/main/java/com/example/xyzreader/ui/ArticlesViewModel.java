@@ -1,7 +1,6 @@
 package com.example.xyzreader.ui;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.xyzreader.data.ArticlesRepository;
@@ -18,8 +17,7 @@ import timber.log.Timber;
 public class ArticlesViewModel extends ViewModel {
 
     private LiveData<List<Article>> articlesListLiveData;
-
-    private MutableLiveData<Integer> currentSelectedArticlePosition = new MutableLiveData<>();
+    private int currentPosition;
 
     public ArticlesViewModel(ArticlesRepository articlesRepository) {
         Timber.d("init");
@@ -30,11 +28,11 @@ public class ArticlesViewModel extends ViewModel {
         return articlesListLiveData;
     }
 
-    public LiveData<Integer> getCurrentSelectedArticlePosition() {
-        return currentSelectedArticlePosition;
+    public int getCurrentSelectedPosition() {
+        return currentPosition;
     }
 
-    public void setCurrentSelectedArticlePosition(int selectedPosition) {
-        currentSelectedArticlePosition.setValue(selectedPosition);
+    public void setCurrentPosition(int position) {
+        currentPosition = position;
     }
 }

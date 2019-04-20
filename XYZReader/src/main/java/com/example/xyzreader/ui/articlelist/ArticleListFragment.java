@@ -63,7 +63,8 @@ public class ArticleListFragment extends Fragment {
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
-
+        // Enable FragmentManager logging
+//        FragmentManager.enableDebugLogging(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setSharedElementEnterTransition(
                     TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
@@ -84,10 +85,12 @@ public class ArticleListFragment extends Fragment {
         if (savedInstanceState == null) {
             updateRefreshingUI(true);
         }
-        mBinding.getRoot().getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
+        mBinding.getRoot().getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
-            public void onDraw() {
+            public boolean onPreDraw() {
+                mBinding.getRoot().getViewTreeObserver().removeOnPreDrawListener(this);
                 startPostponedEnterTransition();
+                return true;
             }
         });
     }
@@ -96,7 +99,7 @@ public class ArticleListFragment extends Fragment {
         setExitSharedElementCallback(new SharedElementCallback() {
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                Integer selectedPosition = mViewModel.getCurrentSelectedArticlePosition().getValue();
+                Integer selectedPosition = mViewModel.getCurrentSelectedPosition();
                 // Locate the ViewHolder for the clicked position.
                 RecyclerView.ViewHolder selectedViewHolder = mBinding.recyclerView
                         .findViewHolderForAdapterPosition(selectedPosition);
@@ -144,8 +147,8 @@ public class ArticleListFragment extends Fragment {
     public ArticleItemsClickListener clickListener = new ArticleItemsClickListener() {
         @Override
         public void onClick(View sharedView, String sharedElementName, int selectedPosition) {
-            // save current selected article inside viewmodel
-            mViewModel.setCurrentSelectedArticlePosition(selectedPosition);
+            // save current selected article inside ViewModel
+            mViewModel.setCurrentPosition(selectedPosition);
             // add shared element transitions extras
             FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
                     .addSharedElement(sharedView, sharedElementName)

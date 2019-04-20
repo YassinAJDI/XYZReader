@@ -61,7 +61,6 @@ public class ArticlesPagerFragment extends Fragment {
 
         mViewModel = HomeActivity.obtainViewModel(getActivity());
         setupPagerAdapter(view);
-        selectCurrentItem();
         prepareSharedElementTransition();
     }
 
@@ -74,7 +73,7 @@ public class ArticlesPagerFragment extends Fragment {
                 // instantiateItem with the selection position.
                 // At this stage, the method will simply return the fragment at the
                 // position and will not create a new one.
-                Integer selectedPosition = mViewModel.getCurrentSelectedArticlePosition().getValue();
+                Integer selectedPosition = mViewModel.getCurrentSelectedPosition();
                 Fragment currentFragment = (Fragment) mPagerAdapter.instantiateItem(mPager, selectedPosition);
                 View view = currentFragment.getView();
                 if (view == null) {
@@ -87,30 +86,38 @@ public class ArticlesPagerFragment extends Fragment {
         });
     }
 
-    private void selectCurrentItem() {
-        // TODO: 4/19/2019 use single live event instead
-        mViewModel.getCurrentSelectedArticlePosition().observe(getViewLifecycleOwner(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer selectedPosition) {
-                mPager.setCurrentItem(selectedPosition, false);
-            }
-        });
-    }
-
     private void setupPagerAdapter(View view) {
-        // Enable FragmentManager logging
-//        FragmentManager.enableDebugLogging(true);
         // Initialize with the child fragment manager.
         mPagerAdapter = new ArticlesPagerAdapter(getChildFragmentManager());
         mPager = view.findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
-
+        // observe pager list
         mViewModel.getArticlesListLiveData().observe(getViewLifecycleOwner(), new Observer<List<Article>>() {
             @Override
             public void onChanged(List<Article> articles) {
                 if (articles != null) {
                     mPagerAdapter.submitList(articles);
+                    // we select item at current position
+                    mPager.setCurrentItem(mViewModel.getCurrentSelectedPosition(), false);
                 }
+            }
+        });
+
+        // save current selected item in viewModel
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mViewModel.setCurrentPosition(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
     }

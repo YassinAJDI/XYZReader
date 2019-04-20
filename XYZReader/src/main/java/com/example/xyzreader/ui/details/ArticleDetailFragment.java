@@ -10,6 +10,7 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -279,7 +280,7 @@ public class ArticleDetailFragment extends Fragment {
                 .listener(new RequestListener<Bitmap>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                        getParentFragment().startPostponedEnterTransition();
+                        scheduleStartPostponedTransition();
                         return false;
                     }
 
@@ -299,11 +300,23 @@ public class ArticleDetailFragment extends Fragment {
                                 }
                             }
                         });
-                        getParentFragment().startPostponedEnterTransition();
+                        scheduleStartPostponedTransition();
+
                         return false;
                     }
                 })
                 .into(mBinding.photo);
         mBinding.executePendingBindings();
+    }
+
+    private void scheduleStartPostponedTransition() {
+        mBinding.getRoot().getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mBinding.getRoot().getViewTreeObserver().removeOnPreDrawListener(this);
+                getParentFragment().startPostponedEnterTransition();
+                return true;
+            }
+        });
     }
 }
