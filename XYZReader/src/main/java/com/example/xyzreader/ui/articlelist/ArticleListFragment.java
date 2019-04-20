@@ -24,6 +24,8 @@ import com.example.xyzreader.ui.details.ArticlesPagerFragment;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import timber.log.Timber;
@@ -39,6 +41,12 @@ public class ArticleListFragment extends Fragment {
 
     private ArticlesViewModel mViewModel;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
+    // Use default locale format
+    private SimpleDateFormat outputFormat = new SimpleDateFormat();
+    // Most time functions can only handle 1902 - 2037
+    private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2, 1, 1);
 
     public ArticleListFragment() {
         // Required empty public constructor
@@ -96,14 +104,6 @@ public class ArticleListFragment extends Fragment {
     public ArticleItemsClickListener clickListener = new ArticleItemsClickListener() {
         @Override
         public void onClick(View sharedView, String sharedElementName, int selectedPosition) {
-
-//            Intent intent = new Intent(ArticleListActivity.this, ArticleDetailActivity.class);
-////                Uri articleUri = ItemsContract.Items.buildItemUri(getItemId(adapterPosition));
-////                intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_URI, articleUri.toString());
-////                    getString(R.string.article_photo_shared_transition)
-//            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-//                    ArticleListActivity.this, sharedView, sharedElementName);
-//            startActivity(intent, options.toBundle());
             // save current selected article inside viewmodel
             mViewModel.setCurrentSelectedArticlePosition(selectedPosition);
             // add shared element transitions extras

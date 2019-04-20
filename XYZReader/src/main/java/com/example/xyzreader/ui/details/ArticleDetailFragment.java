@@ -31,7 +31,6 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.model.Article;
 import com.example.xyzreader.databinding.FragmentArticleDetailBinding;
 import com.example.xyzreader.ui.HomeActivity;
-import com.example.xyzreader.ui.articlelist.ArticleListActivity;
 import com.example.xyzreader.utils.GlideApp;
 import com.example.xyzreader.utils.UiUtils;
 import com.google.android.material.appbar.AppBarLayout;
@@ -48,8 +47,8 @@ import timber.log.Timber;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
- * either contained in a {@link ArticleListActivity} in two-pane mode (on
- * tablets) or a {@link ArticleDetailActivity} on handsets.
+ * either contained in a {@link HomeActivity} in two-pane mode (on
+ * tablets) or a {@link ArticlesPagerFragment} on handsets.
  */
 public class ArticleDetailFragment extends Fragment {
 
@@ -287,7 +286,6 @@ public class ArticleDetailFragment extends Fragment {
                     @Override
                     public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target,
                                                    DataSource dataSource, boolean isFirstResource) {
-                        getParentFragment().startPostponedEnterTransition();
                         // Generate palette synchronously
                         Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
                             public void onGenerated(Palette p) {
@@ -301,6 +299,7 @@ public class ArticleDetailFragment extends Fragment {
                                 }
                             }
                         });
+                        getParentFragment().startPostponedEnterTransition();
                         return false;
                     }
                 })

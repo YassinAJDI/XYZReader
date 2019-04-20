@@ -38,12 +38,12 @@ public class ArticlesPagerFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            postponeEnterTransition();
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setSharedElementEnterTransition(
                     TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
-        }
-        if (savedInstanceState == null) {
-            postponeEnterTransition();
         }
     }
 
