@@ -1,10 +1,12 @@
 package com.example.xyzreader.ui.articlelist;
 
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,9 +18,11 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.transition.TransitionInflater;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.model.Article;
+import com.example.xyzreader.databinding.FragmentArticleListBinding;
 import com.example.xyzreader.ui.ArticlesViewModel;
 import com.example.xyzreader.ui.HomeActivity;
 import com.example.xyzreader.ui.details.ArticlesPagerFragment;
@@ -42,6 +46,7 @@ import timber.log.Timber;
 public class ArticleListFragment extends Fragment {
 
     private ArticlesViewModel mViewModel;
+    private FragmentArticleListBinding mBinding;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
@@ -49,7 +54,6 @@ public class ArticleListFragment extends Fragment {
     private SimpleDateFormat outputFormat = new SimpleDateFormat();
     // Most time functions can only handle 1902 - 2037
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2, 1, 1);
-    private RecyclerView mRecyclerView;
 
     public ArticleListFragment() {
         // Required empty public constructor
@@ -58,8 +62,16 @@ public class ArticleListFragment extends Fragment {
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Timber.d("onCreateView");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setSharedElementEnterTransition(
+                    TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
+        }
+        postponeEnterTransition();
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_article_list, container, false);
+        mBinding = FragmentArticleListBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
     }
 
     @Override
@@ -67,12 +79,17 @@ public class ArticleListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mViewModel = HomeActivity.obtainViewModel(getActivity());
-        mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         setupListAdapter(view);
         prepareTransitions();
         if (savedInstanceState == null) {
             updateRefreshingUI(true);
         }
+        mBinding.getRoot().getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
+            @Override
+            public void onDraw() {
+                startPostponedEnterTransition();
+            }
+        });
     }
 
     private void prepareTransitions() {
@@ -81,7 +98,7 @@ public class ArticleListFragment extends Fragment {
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                 Integer selectedPosition = mViewModel.getCurrentSelectedArticlePosition().getValue();
                 // Locate the ViewHolder for the clicked position.
-                RecyclerView.ViewHolder selectedViewHolder = mRecyclerView
+                RecyclerView.ViewHolder selectedViewHolder = mBinding.recyclerView
                         .findViewHolderForAdapterPosition(selectedPosition);
                 if (selectedViewHolder == null || selectedViewHolder.itemView == null) {
                     return;
@@ -95,13 +112,13 @@ public class ArticleListFragment extends Fragment {
     }
 
     private void setupListAdapter(View view) {
-        mRecyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = mBinding.recyclerView;
         final ArticlesAdapter adapter = new ArticlesAdapter(clickListener);
         int columnCount = getResources().getInteger(R.integer.list_column_count);
         StaggeredGridLayoutManager sglm =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(sglm);
-        mRecyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(sglm);
+        recyclerView.setAdapter(adapter);
 
         // observe articles list LiveData
         mViewModel.getArticlesListLiveData().observe(getViewLifecycleOwner(), new Observer<List<Article>>() {
@@ -117,7 +134,7 @@ public class ArticleListFragment extends Fragment {
     }
 
     private void updateRefreshingUI(boolean isRefreshing) {
-        mSwipeRefreshLayout.setRefreshing(isRefreshing);
+//        mSwipeRefreshLayout.setRefreshing(isRefreshing);
     }
 
     public interface ArticleItemsClickListener {

@@ -67,12 +67,12 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
 //        }
         // article thumbnail
         binding.thumbnail.setAspectRatio(article.getAspect_ratio());
-        // Set the string value of the article id as the unique transition name for the view.
-        ViewCompat.setTransitionName(binding.thumbnail, String.valueOf(article.getId()));
+
         GlideApp.with(binding.getRoot().getContext())
                 .asBitmap()
                 .load(article.getThumb_url())
                 .dontAnimate()
+                .dontTransform()
                 .placeholder(R.color.photo_placeholder)
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(
                         (int) UiUtils.dipToPixels(binding.getRoot().getContext(), 6))))
@@ -102,6 +102,8 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
                     }
                 })
                 .into(binding.thumbnail);
+        // Set the string value of the article id as the unique transition name for the view.
+        ViewCompat.setTransitionName(binding.thumbnail, String.valueOf(article.getId()));
 
         // Article items click event
         binding.getRoot().setOnClickListener(new View.OnClickListener() {
