@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.FragmentNavigator;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 import timber.log.Timber;
 
@@ -47,6 +49,7 @@ public class ArticleListFragment extends Fragment {
     private SimpleDateFormat outputFormat = new SimpleDateFormat();
     // Most time functions can only handle 1902 - 2037
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2, 1, 1);
+    private RecyclerView mRecyclerView;
 
     public ArticleListFragment() {
         // Required empty public constructor
@@ -66,19 +69,39 @@ public class ArticleListFragment extends Fragment {
         mViewModel = HomeActivity.obtainViewModel(getActivity());
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         setupListAdapter(view);
+        prepareTransitions();
         if (savedInstanceState == null) {
             updateRefreshingUI(true);
         }
     }
 
+    private void prepareTransitions() {
+        setExitSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                Integer selectedPosition = mViewModel.getCurrentSelectedArticlePosition().getValue();
+                // Locate the ViewHolder for the clicked position.
+                RecyclerView.ViewHolder selectedViewHolder = mRecyclerView
+                        .findViewHolderForAdapterPosition(selectedPosition);
+                if (selectedViewHolder == null || selectedViewHolder.itemView == null) {
+                    return;
+                }
+
+                // Map the first shared element name to the child ImageView.
+                sharedElements.put(names.get(0),
+                        selectedViewHolder.itemView.findViewById(R.id.thumbnail));
+            }
+        });
+    }
+
     private void setupListAdapter(View view) {
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
         final ArticlesAdapter adapter = new ArticlesAdapter(clickListener);
         int columnCount = getResources().getInteger(R.integer.list_column_count);
         StaggeredGridLayoutManager sglm =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(sglm);
-        recyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(sglm);
+        mRecyclerView.setAdapter(adapter);
 
         // observe articles list LiveData
         mViewModel.getArticlesListLiveData().observe(getViewLifecycleOwner(), new Observer<List<Article>>() {

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.transition.TransitionInflater;
@@ -21,6 +22,7 @@ import com.example.xyzreader.ui.HomeActivity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass, representing a single Article detail screen, letting you swipe between articles
@@ -60,6 +62,29 @@ public class ArticlesPagerFragment extends Fragment {
         mViewModel = HomeActivity.obtainViewModel(getActivity());
         setupPagerAdapter(view);
         selectCurrentItem();
+        prepareSharedElementTransition();
+    }
+
+    private void prepareSharedElementTransition() {
+        setEnterSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                // Locate the image view at the primary fragment (the ImageFragment
+                // that is currently visible). To locate the fragment, call
+                // instantiateItem with the selection position.
+                // At this stage, the method will simply return the fragment at the
+                // position and will not create a new one.
+                Integer selectedPosition = mViewModel.getCurrentSelectedArticlePosition().getValue();
+                Fragment currentFragment = (Fragment) mPagerAdapter.instantiateItem(mPager, selectedPosition);
+                View view = currentFragment.getView();
+                if (view == null) {
+                    return;
+                }
+
+                // Map the first shared element name to the child ImageView.
+                sharedElements.put(names.get(0), view.findViewById(R.id.photo));
+            }
+        });
     }
 
     private void selectCurrentItem() {
