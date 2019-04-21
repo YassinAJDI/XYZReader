@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * @author Yassin Ajdi
  * @since 4/16/2019.
@@ -54,6 +56,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
     public void submitList(List<Article> articles) {
+        Timber.d("data changed rebind viewholders");
         mArticleList = articles;
         notifyDataSetChanged();
     }

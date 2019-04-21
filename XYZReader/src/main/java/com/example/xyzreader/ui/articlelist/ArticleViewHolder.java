@@ -53,6 +53,8 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindTo(final Article article) {
+        final int adapterPosition = getAdapterPosition();
+        Timber.d("binding position: " + adapterPosition);
         // title
         binding.articleTitle.setText(article.getTitle());
 //        Date publishedDate = parsePublishedDate();
@@ -67,18 +69,18 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
 //        }
         // article thumbnail
         binding.thumbnail.setAspectRatio(article.getAspect_ratio());
-
         GlideApp.with(binding.getRoot().getContext())
                 .asBitmap()
                 .load(article.getThumb_url())
                 .dontAnimate()
-                .dontTransform()
                 .placeholder(R.color.photo_placeholder)
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(
                         (int) UiUtils.dipToPixels(binding.getRoot().getContext(), 6))))
                 .listener(new RequestListener<Bitmap>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                        // TODO: 4/21/2019 start transition
+                        listener.onLoadCompleted(adapterPosition);
                         return false;
                     }
 
@@ -98,18 +100,17 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
                                 }
                             }
                         });
+                        listener.onLoadCompleted(adapterPosition);
                         return false;
                     }
                 })
                 .into(binding.thumbnail);
         // Set the string value of the article id as the unique transition name for the view.
         ViewCompat.setTransitionName(binding.thumbnail, String.valueOf(article.getId()));
-
         // Article items click event
         binding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int adapterPosition = getAdapterPosition();
                 Timber.d("Article Clicked at position: " + adapterPosition + " with ID of: " + article.getId());
                 listener.onClick(binding.thumbnail, String.valueOf(article.getId()), adapterPosition);
             }

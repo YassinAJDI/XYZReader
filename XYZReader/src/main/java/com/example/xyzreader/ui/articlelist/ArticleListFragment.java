@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
 
@@ -48,6 +49,7 @@ public class ArticleListFragment extends Fragment {
     private ArticlesViewModel mViewModel;
     private FragmentArticleListBinding mBinding;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private AtomicBoolean enterTransitionStarted;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -65,37 +67,57 @@ public class ArticleListFragment extends Fragment {
         Timber.d("onCreateView");
         // Enable FragmentManager logging
 //        FragmentManager.enableDebugLogging(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setSharedElementEnterTransition(
-                    TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
-        }
-        postponeEnterTransition();
         // Inflate the layout for this fragment
         mBinding = FragmentArticleListBinding.inflate(inflater, container, false);
+        mViewModel = HomeActivity.obtainViewModel(getActivity());
+        prepareTransitions();
+        setupListAdapter();
+
         return mBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+//        if (savedInstanceState == null) {
+//            updateRefreshingUI(true);
+//        }
+        scrollToPosition();
+    }
 
-        mViewModel = HomeActivity.obtainViewModel(getActivity());
-        setupListAdapter(view);
-        prepareTransitions();
-        if (savedInstanceState == null) {
-            updateRefreshingUI(true);
-        }
-        mBinding.getRoot().getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+    private void scrollToPosition() {
+        mBinding.recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
-            public boolean onPreDraw() {
-                mBinding.getRoot().getViewTreeObserver().removeOnPreDrawListener(this);
-                startPostponedEnterTransition();
-                return true;
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                mBinding.recyclerView.removeOnLayoutChangeListener(this);
+                final RecyclerView.LayoutManager layoutManager = mBinding.recyclerView.getLayoutManager();
+                View viewAtPosition = layoutManager.findViewByPosition(mViewModel.getCurrentSelectedPosition());
+                // Scroll to position if the view for the current position is null (not currently part of
+                // layout manager children), or it's not completely visible.
+//                boolean isPartiallyVisible = ;
+//                boolean isFullyVisible = ;
+                if (viewAtPosition == null
+                        || !(layoutManager.isViewPartiallyVisible(viewAtPosition, false, true)
+                        || layoutManager.isViewPartiallyVisible(viewAtPosition, true, true))) {
+                    mBinding.recyclerView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Timber.d("post animation");
+                            layoutManager.scrollToPosition(mViewModel.getCurrentSelectedPosition());
+                        }
+                    });
+                }
             }
         });
     }
 
     private void prepareTransitions() {
+        enterTransitionStarted = new AtomicBoolean();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setSharedElementEnterTransition(
+                    TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
+        }
+
         setExitSharedElementCallback(new SharedElementCallback() {
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
@@ -114,7 +136,7 @@ public class ArticleListFragment extends Fragment {
         });
     }
 
-    private void setupListAdapter(View view) {
+    private void setupListAdapter() {
         RecyclerView recyclerView = mBinding.recyclerView;
         final ArticlesAdapter adapter = new ArticlesAdapter(clickListener);
         int columnCount = getResources().getInteger(R.integer.list_column_count);
@@ -127,11 +149,13 @@ public class ArticleListFragment extends Fragment {
         mViewModel.getArticlesListLiveData().observe(getViewLifecycleOwner(), new Observer<List<Article>>() {
             @Override
             public void onChanged(List<Article> articles) {
+                postponeEnterTransition();
                 if (articles != null) {
                     Timber.d("articles: " + articles.size());
                     updateRefreshingUI(false);
                     adapter.submitList(articles);
                 }
+                Timber.d("getArticlesListLiveData");
             }
         });
     }
@@ -142,6 +166,8 @@ public class ArticleListFragment extends Fragment {
 
     public interface ArticleItemsClickListener {
         void onClick(View sharedView, String sharedElementName, int selectedPosition);
+
+        void onLoadCompleted(int position);
     }
 
     public ArticleItemsClickListener clickListener = new ArticleItemsClickListener() {
@@ -160,5 +186,35 @@ public class ArticleListFragment extends Fragment {
                     null,
                     extras);
         }
+
+        @Override
+        public void onLoadCompleted(int position) {
+            Timber.d("onLoadCompleted");
+            Timber.d("enterTransitionStarted: " + enterTransitionStarted);
+            // Call startPostponedEnterTransition only when the 'selected' image loading is completed.
+            int selectedPosition = mViewModel.getCurrentSelectedPosition();
+            if (selectedPosition != position) {
+                Timber.d("current selected pos= " + selectedPosition + ". adapter pos= " + position);
+                return;
+            }
+            if (enterTransitionStarted.getAndSet(true)) {
+                Timber.d("transation already started");
+                return;
+            }
+            scheduleStartPostponedTransition();
+        }
     };
+
+    private void scheduleStartPostponedTransition() {
+        Timber.d("scheduleStartPostponedTransition");
+        mBinding.recyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mBinding.recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
+                startPostponedEnterTransition();
+                Timber.d("startPostponedEnterTransition");
+                return true;
+            }
+        });
+    }
 }
