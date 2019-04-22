@@ -6,7 +6,6 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +37,7 @@ import com.google.android.material.appbar.AppBarLayout;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import timber.log.Timber;
 
@@ -57,12 +53,6 @@ public class ArticleDetailFragment extends Fragment {
     private FragmentArticleDetailBinding mBinding;
     private Article mArticle;
     private boolean mIsCard = false;
-
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
-    // Use default locale format
-    private SimpleDateFormat outputFormat = new SimpleDateFormat();
-    // Most time functions can only handle 1902 - 2037
-    private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2, 1, 1);
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -240,42 +230,17 @@ public class ArticleDetailFragment extends Fragment {
         });
     }
 
-    private Date parsePublishedDate() {
-        try {
-            String date = mArticle.getPublished_date();
-            return dateFormat.parse(date);
-        } catch (ParseException ex) {
-            Timber.e(ex);
-            Timber.e("passing today's date");
-            return new Date();
-        }
-    }
 
     private void populateUi() {
         mBinding.articleBody.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
         // title
         mBinding.articleTitle.setText(mArticle.getTitle());
         // publish date
-        Date publishedDate = parsePublishedDate();
-        if (!publishedDate.before(START_OF_EPOCH.getTime())) {
-            mBinding.articleByline.setText(Html.fromHtml(
-                    DateUtils.getRelativeTimeSpanString(
-                            publishedDate.getTime(),
-                            System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-                            DateUtils.FORMAT_ABBREV_ALL).toString()
-                            + " by <font color='#ffffff'>"
-                            + mArticle.getAuthor()
-                            + "</font>"));
-        } else {
-            // If date is before 1902, just show the string
-            mBinding.articleByline.setText(Html.fromHtml(
-                    outputFormat.format(publishedDate) + " by <font color='#ffffff'>"
-                            + mArticle.getAuthor()
-                            + "</font>"));
-
-        }
+        Date publishedDate = UiUtils.parsePublishedDate(mArticle.getPublished_date());
+        mBinding.articleByline.setText(UiUtils.formatArticleByline(publishedDate, mArticle.getAuthor()));
         // article body
-        mBinding.articleBody.setText(Html.fromHtml(mArticle.getBody().replaceAll("(\r\n|\n)", "<br />")));
+        mBinding.articleBody.setText(
+                Html.fromHtml(mArticle.getBody().replaceAll("(\r\n|\n)", "<br />")));
         // article image
         GlideApp.with(this)
                 .asBitmap()
@@ -285,7 +250,8 @@ public class ArticleDetailFragment extends Fragment {
                 .placeholder(R.color.photo_placeholder)
                 .listener(new RequestListener<Bitmap>() {
                     @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object
+                            model, Target<Bitmap> target, boolean isFirstResource) {
                         scheduleStartPostponedTransition();
                         return false;
                     }
@@ -299,10 +265,7 @@ public class ArticleDetailFragment extends Fragment {
                                 Palette.Swatch swatch = UiUtils.getDominantColor(p);
                                 if (swatch != null) {
                                     mBinding.metaBar.setBackgroundColor(swatch.getRgb());
-                                    // TODO: 4/8/2019 apply palette colors for title and subtitle
-
-//                                        holder.titleView.setTextColor(swatch.getTitleTextColor());
-//                                        holder.subtitleView.setTextColor(swatch.getBodyTextColor());
+                                    mBinding.collapsingToolbar.setContentScrimColor(swatch.getRgb());
                                 }
                             }
                         });

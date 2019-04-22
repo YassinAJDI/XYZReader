@@ -32,8 +32,6 @@ import com.example.xyzreader.ui.details.ArticlesPagerFragment;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -53,12 +51,6 @@ public class ArticleListFragment extends Fragment {
     private FragmentArticleListBinding mBinding;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private AtomicBoolean enterTransitionStarted;
-
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
-    // Use default locale format
-    private SimpleDateFormat outputFormat = new SimpleDateFormat();
-    // Most time functions can only handle 1902 - 2037
-    private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2, 1, 1);
 
     public ArticleListFragment() {
         // Required empty public constructor

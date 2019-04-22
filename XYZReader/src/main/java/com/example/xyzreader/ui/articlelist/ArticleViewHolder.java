@@ -25,6 +25,8 @@ import com.example.xyzreader.utils.GlideApp;
 import com.example.xyzreader.utils.UiUtils;
 import com.google.android.material.card.MaterialCardView;
 
+import java.util.Date;
+
 import timber.log.Timber;
 
 /**
@@ -57,16 +59,9 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
         Timber.d("binding position: " + adapterPosition);
         // title
         binding.articleTitle.setText(article.getTitle());
-//        Date publishedDate = parsePublishedDate();
-//        if (!publishedDate.before(START_OF_EPOCH.getTime())) {
-//            holder.subtitleView.setText(Html.fromHtml(
-//                    DateUtils.getRelativeTimeSpanString(
-//                            publishedDate.getTime(),
-//                            System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-//                            DateUtils.FORMAT_ABBREV_ALL).toString()));
-//        } else {
-//            holder.subtitleView.setText(Html.fromHtml(outputFormat.format(publishedDate)));
-//        }
+        // subtitle
+        Date publishedDate = UiUtils.parsePublishedDate(article.getPublished_date());
+        binding.articleSubtitle.setText(UiUtils.formatArticleByline(publishedDate, article.getAuthor()));
         // article thumbnail
         binding.thumbnail.setAspectRatio(article.getAspect_ratio());
         GlideApp.with(binding.getRoot().getContext())
@@ -95,8 +90,6 @@ public class ArticleViewHolder extends RecyclerView.ViewHolder {
                                     MaterialCardView cardView = (MaterialCardView) binding.getRoot();
                                     cardView.setCardBackgroundColor(swatch.getRgb());
                                     cardView.setStrokeColor(swatch.getRgb());
-//                                        holder.titleView.setTextColor(swatch.getTitleTextColor());
-//                                        holder.subtitleView.setTextColor(swatch.getBodyTextColor());
                                 }
                             }
                         });
