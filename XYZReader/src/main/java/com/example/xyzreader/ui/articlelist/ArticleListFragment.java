@@ -64,6 +64,7 @@ public class ArticleListFragment extends Fragment {
         FragmentManager.enableDebugLogging(true);
         // Inflate the layout for this fragment
         mBinding = FragmentArticleListBinding.inflate(inflater, container, false);
+//        mBinding.coordinator.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mViewModel = HomeActivity.obtainViewModel(getActivity());
         prepareTransitions();
         setupListAdapter();
@@ -90,31 +91,24 @@ public class ArticleListFragment extends Fragment {
     private void insetLayout() {
         // inset the toolbar down by the status bar height
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-//            final AppBarLayout appBarLayout = mBinding.appbar;
-//            ViewCompat.setOnApplyWindowInsetsListener(appBarLayout, new OnApplyWindowInsetsListener() {
-//                @Override
-//                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-//                    Timber.d("onApplyWindowInsets");
-//                    ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) appBarLayout.getLayoutParams();
-//                    lpToolbar.topMargin = insets.getSystemWindowInsetTop();
-////                    appBarLayout.setPadding(0, insets.getStableInsetTop(), 0, 0);
-//                    appBarLayout.setLayoutParams(lpToolbar);
-//                    // clear this listener so insets aren't re-applied
-//                    v.setOnApplyWindowInsetsListener(null);
-//                    return insets;
-//                }
-//            });
             mBinding.coordinator.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
                 @Override
                 public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
                     Timber.d("onApplyWindowInsets");
+                    // inset status bar
                     ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams)
-                            mBinding.coordinator.getLayoutParams();
+                            mBinding.toolbar.getLayoutParams();
                     lpToolbar.topMargin = insets.getSystemWindowInsetTop();
-                    mBinding.coordinator.setLayoutParams(lpToolbar);
+                    mBinding.toolbar.setLayoutParams(lpToolbar);
+                    // inset the recyclerview bottom by the navigation bar
+                    mBinding.recyclerView.setPadding(
+                            mBinding.recyclerView.getPaddingLeft() + insets.getSystemWindowInsetLeft(), // landscape
+                            mBinding.recyclerView.getPaddingTop(),
+                            mBinding.recyclerView.getPaddingRight() + insets.getSystemWindowInsetRight(), // landscape
+                            mBinding.recyclerView.getPaddingBottom() + insets.getSystemWindowInsetBottom());
                     // clear this listener so insets aren't re-applied
                     v.setOnApplyWindowInsetsListener(null);
-                    return insets;
+                    return insets.consumeSystemWindowInsets();
                 }
             });
             ViewCompat.requestApplyInsets(mBinding.coordinator);
