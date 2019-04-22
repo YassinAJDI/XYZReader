@@ -2,7 +2,6 @@ package com.example.xyzreader.ui.details;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -232,7 +231,6 @@ public class ArticleDetailFragment extends Fragment {
 
 
     private void populateUi() {
-        mBinding.articleBody.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
         // title
         mBinding.articleTitle.setText(mArticle.getTitle());
         // publish date
