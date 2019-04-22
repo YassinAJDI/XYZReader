@@ -97,7 +97,7 @@ public class ArticlesPagerFragment extends Fragment {
             public void onChanged(List<Article> articles) {
                 if (articles != null) {
                     mPagerAdapter.submitList(articles);
-                    // we select item at current position
+                    // select item at current position
                     mPager.setCurrentItem(mViewModel.getCurrentSelectedPosition(), false);
                 }
             }

@@ -7,11 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowInsets;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
@@ -66,7 +69,7 @@ public class ArticleListFragment extends Fragment {
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
         // Enable FragmentManager logging
-//        FragmentManager.enableDebugLogging(true);
+        FragmentManager.enableDebugLogging(true);
         // Inflate the layout for this fragment
         mBinding = FragmentArticleListBinding.inflate(inflater, container, false);
         mViewModel = HomeActivity.obtainViewModel(getActivity());
@@ -82,7 +85,49 @@ public class ArticleListFragment extends Fragment {
 //        if (savedInstanceState == null) {
 //            updateRefreshingUI(true);
 //        }
+
         scrollToPosition();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        insetLayout();
+    }
+
+    private void insetLayout() {
+        // inset the toolbar down by the status bar height
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+//            final AppBarLayout appBarLayout = mBinding.appbar;
+//            ViewCompat.setOnApplyWindowInsetsListener(appBarLayout, new OnApplyWindowInsetsListener() {
+//                @Override
+//                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+//                    Timber.d("onApplyWindowInsets");
+//                    ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) appBarLayout.getLayoutParams();
+//                    lpToolbar.topMargin = insets.getSystemWindowInsetTop();
+////                    appBarLayout.setPadding(0, insets.getStableInsetTop(), 0, 0);
+//                    appBarLayout.setLayoutParams(lpToolbar);
+//                    // clear this listener so insets aren't re-applied
+//                    v.setOnApplyWindowInsetsListener(null);
+//                    return insets;
+//                }
+//            });
+            mBinding.coordinator.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                    Timber.d("onApplyWindowInsets");
+                    ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams)
+                            mBinding.appbarLayout.getLayoutParams();
+                    lpToolbar.topMargin = insets.getSystemWindowInsetTop();
+//                    appBarLayout.setPadding(0, insets.getStableInsetTop(), 0, 0);
+                    mBinding.appbarLayout.setLayoutParams(lpToolbar);
+                    // clear this listener so insets aren't re-applied
+                    v.setOnApplyWindowInsetsListener(null);
+                    return insets;
+                }
+            });
+            ViewCompat.requestApplyInsets(mBinding.coordinator);
+        }
     }
 
     private void scrollToPosition() {

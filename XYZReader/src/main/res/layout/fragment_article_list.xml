@@ -5,8 +5,8 @@
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:layout_height="match_parent">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/coordinator"
@@ -14,9 +14,9 @@
             android:layout_height="match_parent">
 
             <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/appbar"
+                android:id="@+id/appbar_layout"
                 android:layout_width="match_parent"
-                android:layout_height="112dp"
+                android:layout_height="?attr/actionBarSize"
                 android:background="?colorPrimary"
                 android:elevation="8dp"
                 android:gravity="center"

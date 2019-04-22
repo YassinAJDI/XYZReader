@@ -18,7 +18,7 @@ import timber.log.Timber;
  * @author Yassin Ajdi
  * @since 4/16/2019.
  */
-public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ArticlesAdapter extends RecyclerView.Adapter<ArticleViewHolder> {
 
     private List<Article> mArticleList;
     private ArticleItemsClickListener listener;
@@ -29,13 +29,13 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @NotNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+    public ArticleViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         return ArticleViewHolder.create(parent, listener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((ArticleViewHolder) holder).bindTo(mArticleList.get(position));
+    public void onBindViewHolder(@NonNull ArticleViewHolder holder, int position) {
+        holder.bindTo(mArticleList.get(position));
     }
 
 //    private Date parsePublishedDate() {
