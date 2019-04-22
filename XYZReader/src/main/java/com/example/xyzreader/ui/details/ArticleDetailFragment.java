@@ -35,7 +35,6 @@ import com.example.xyzreader.ui.HomeActivity;
 import com.example.xyzreader.utils.GlideApp;
 import com.example.xyzreader.utils.UiUtils;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -134,7 +133,7 @@ public class ArticleDetailFragment extends Fragment {
         });
 
         setupToolbar();
-//        insetLayout();
+        insetLayout();
         populateUi();
     }
 
@@ -173,7 +172,6 @@ public class ArticleDetailFragment extends Fragment {
 
     @Override
     public void onResume() {
-        insetLayout();
         super.onResume();
         Timber.d("onResume");
 
@@ -220,7 +218,6 @@ public class ArticleDetailFragment extends Fragment {
      * sets the title on the toolbar only if the toolbar is collapsed
      */
     private void handleCollapsedToolbarTitle() {
-        final CollapsingToolbarLayout collapsingToolbar = mBinding.collapsingToolbar;
         mBinding.appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = true;
             int scrollRange = -1;
@@ -232,11 +229,11 @@ public class ArticleDetailFragment extends Fragment {
                 }
                 // verify if the toolbar is completely collapsed and set the movie name as the title
                 if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbar.setTitle(mArticle.getTitle());
+                    mBinding.collapsingToolbar.setTitle(mArticle.getTitle());
                     isShow = true;
                 } else if (isShow) {
                     // display an empty string when toolbar is expanded
-                    collapsingToolbar.setTitle(" ");
+                    mBinding.collapsingToolbar.setTitle(" ");
                     isShow = false;
                 }
             }

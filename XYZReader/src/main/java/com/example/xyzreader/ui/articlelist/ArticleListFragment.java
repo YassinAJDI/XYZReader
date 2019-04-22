@@ -117,10 +117,9 @@ public class ArticleListFragment extends Fragment {
                 public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
                     Timber.d("onApplyWindowInsets");
                     ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams)
-                            mBinding.appbarLayout.getLayoutParams();
+                            mBinding.coordinator.getLayoutParams();
                     lpToolbar.topMargin = insets.getSystemWindowInsetTop();
-//                    appBarLayout.setPadding(0, insets.getStableInsetTop(), 0, 0);
-                    mBinding.appbarLayout.setLayoutParams(lpToolbar);
+                    mBinding.coordinator.setLayoutParams(lpToolbar);
                     // clear this listener so insets aren't re-applied
                     v.setOnApplyWindowInsetsListener(null);
                     return insets;
@@ -147,7 +146,7 @@ public class ArticleListFragment extends Fragment {
                     mBinding.recyclerView.post(new Runnable() {
                         @Override
                         public void run() {
-                            Timber.d("post animation");
+//                            Timber.d("post animation");
                             layoutManager.scrollToPosition(mViewModel.getCurrentSelectedPosition());
                         }
                     });
@@ -200,7 +199,7 @@ public class ArticleListFragment extends Fragment {
                     updateRefreshingUI(false);
                     adapter.submitList(articles);
                 }
-                Timber.d("getArticlesListLiveData");
+//                Timber.d("getArticlesListLiveData");
             }
         });
     }
@@ -234,16 +233,16 @@ public class ArticleListFragment extends Fragment {
 
         @Override
         public void onLoadCompleted(int position) {
-            Timber.d("onLoadCompleted");
-            Timber.d("enterTransitionStarted: " + enterTransitionStarted);
+//            Timber.d("onLoadCompleted");
+//            Timber.d("enterTransitionStarted: " + enterTransitionStarted);
             // Call startPostponedEnterTransition only when the 'selected' image loading is completed.
             int selectedPosition = mViewModel.getCurrentSelectedPosition();
             if (selectedPosition != position) {
-                Timber.d("current selected pos= " + selectedPosition + ". adapter pos= " + position);
+//                Timber.d("current selected pos= " + selectedPosition + ". adapter pos= " + position);
                 return;
             }
             if (enterTransitionStarted.getAndSet(true)) {
-                Timber.d("transation already started");
+//                Timber.d("transation already started");
                 return;
             }
             scheduleStartPostponedTransition();
@@ -251,13 +250,13 @@ public class ArticleListFragment extends Fragment {
     };
 
     private void scheduleStartPostponedTransition() {
-        Timber.d("scheduleStartPostponedTransition");
+//        Timber.d("scheduleStartPostponedTransition");
         mBinding.recyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 mBinding.recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
                 startPostponedEnterTransition();
-                Timber.d("startPostponedEnterTransition");
+//                Timber.d("startPostponedEnterTransition");
                 return true;
             }
         });
