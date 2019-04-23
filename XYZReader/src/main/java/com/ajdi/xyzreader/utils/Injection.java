@@ -1,10 +1,10 @@
-package com.example.xyzreader.utils;
+package com.ajdi.xyzreader.utils;
 
 import android.content.Context;
 
-import com.example.xyzreader.data.ArticlesRepository;
-import com.example.xyzreader.remote.ApiClient;
-import com.example.xyzreader.remote.ArticleService;
+import com.ajdi.xyzreader.data.ArticlesRepository;
+import com.ajdi.xyzreader.remote.ApiClient;
+import com.ajdi.xyzreader.remote.ArticleService;
 
 /**
  * @author Yassin Ajdi

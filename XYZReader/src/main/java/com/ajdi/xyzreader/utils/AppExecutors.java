@@ -1,4 +1,4 @@
-package com.example.xyzreader.utils;
+package com.ajdi.xyzreader.utils;
 
 import android.os.Handler;
 import android.os.Looper;

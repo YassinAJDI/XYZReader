@@ -1,4 +1,4 @@
-package com.example.xyzreader.data.model;
+package com.ajdi.xyzreader.data.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,6 +1,6 @@
-package com.example.xyzreader.remote;
+package com.ajdi.xyzreader.remote;
 
-import com.example.xyzreader.data.model.Article;
+import com.ajdi.xyzreader.data.model.Article;
 
 import java.util.List;
 

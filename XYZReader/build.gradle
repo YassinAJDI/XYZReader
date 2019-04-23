@@ -4,6 +4,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
+        applicationId "com.ajdi.xyzreader"
         minSdkVersion 19
         targetSdkVersion 28
     }

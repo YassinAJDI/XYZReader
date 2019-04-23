@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/article_list_dest"
-        android:name="com.example.xyzreader.ui.articlelist.ArticleListFragment"
+        android:name="com.ajdi.xyzreader.ui.articlelist.ArticleListFragment"
         android:label="fragment_article_list"
         tools:layout="@layout/fragment_article_list">
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/articles_pager_dest"
-        android:name="com.example.xyzreader.ui.details.ArticlesPagerFragment"
+        android:name="com.ajdi.xyzreader.ui.details.ArticlesPagerFragment"
         android:label="fragment_articles_pager"
         tools:layout="@layout/fragment_articles_pager" />
 </navigation>

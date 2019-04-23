@@ -1,4 +1,4 @@
-package com.example.xyzreader.ui.details;
+package com.ajdi.xyzreader.ui.details;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,12 +26,12 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.example.xyzreader.R;
-import com.example.xyzreader.data.model.Article;
-import com.example.xyzreader.databinding.FragmentArticleDetailBinding;
-import com.example.xyzreader.ui.HomeActivity;
-import com.example.xyzreader.utils.GlideApp;
-import com.example.xyzreader.utils.UiUtils;
+import com.ajdi.xyzreader.R;
+import com.ajdi.xyzreader.data.model.Article;
+import com.ajdi.xyzreader.databinding.FragmentArticleDetailBinding;
+import com.ajdi.xyzreader.ui.HomeActivity;
+import com.ajdi.xyzreader.utils.GlideApp;
+import com.ajdi.xyzreader.utils.UiUtils;
 import com.google.android.material.appbar.AppBarLayout;
 
 import org.jetbrains.annotations.NotNull;

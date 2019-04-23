@@ -1,8 +1,6 @@
-package com.example.xyzreader;
+package com.ajdi.xyzreader;
 
 import android.app.Application;
-
-import com.example.xyzreader.BuildConfig;
 
 import timber.log.Timber;
 

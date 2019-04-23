@@ -1,4 +1,4 @@
-package com.example.xyzreader.ui.details;
+package com.ajdi.xyzreader.ui.details;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -14,10 +14,10 @@ import androidx.lifecycle.Observer;
 import androidx.transition.TransitionInflater;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.xyzreader.R;
-import com.example.xyzreader.data.model.Article;
-import com.example.xyzreader.ui.ArticlesViewModel;
-import com.example.xyzreader.ui.HomeActivity;
+import com.ajdi.xyzreader.R;
+import com.ajdi.xyzreader.data.model.Article;
+import com.ajdi.xyzreader.ui.ArticlesViewModel;
+import com.ajdi.xyzreader.ui.HomeActivity;
 
 import org.jetbrains.annotations.NotNull;
 

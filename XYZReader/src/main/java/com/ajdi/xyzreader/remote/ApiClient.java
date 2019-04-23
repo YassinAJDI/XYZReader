@@ -1,4 +1,4 @@
-package com.example.xyzreader.remote;
+package com.ajdi.xyzreader.remote;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

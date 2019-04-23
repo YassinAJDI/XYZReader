@@ -1,4 +1,4 @@
-package com.example.xyzreader.ui;
+package com.ajdi.xyzreader.ui;
 
 import android.os.Bundle;
 
@@ -6,9 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.xyzreader.R;
-import com.example.xyzreader.utils.Injection;
-import com.example.xyzreader.utils.ViewModelFactory;
+import com.ajdi.xyzreader.R;
+import com.ajdi.xyzreader.utils.Injection;
+import com.ajdi.xyzreader.utils.ViewModelFactory;
 
 public class HomeActivity extends AppCompatActivity {
 

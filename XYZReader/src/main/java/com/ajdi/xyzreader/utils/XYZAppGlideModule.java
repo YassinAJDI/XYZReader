@@ -1,4 +1,4 @@
-package com.example.xyzreader.utils;
+package com.ajdi.xyzreader.utils;
 
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;

@@ -1,4 +1,4 @@
-package com.example.xyzreader.ui.articlelist;
+package com.ajdi.xyzreader.ui.articlelist;
 
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
@@ -17,12 +17,12 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.example.xyzreader.R;
-import com.example.xyzreader.data.model.Article;
-import com.example.xyzreader.databinding.ListItemArticleBinding;
-import com.example.xyzreader.ui.articlelist.ArticleListFragment.ArticleItemsClickListener;
-import com.example.xyzreader.utils.GlideApp;
-import com.example.xyzreader.utils.UiUtils;
+import com.ajdi.xyzreader.R;
+import com.ajdi.xyzreader.data.model.Article;
+import com.ajdi.xyzreader.databinding.ListItemArticleBinding;
+import com.ajdi.xyzreader.ui.articlelist.ArticleListFragment.ArticleItemsClickListener;
+import com.ajdi.xyzreader.utils.GlideApp;
+import com.ajdi.xyzreader.utils.UiUtils;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.Date;

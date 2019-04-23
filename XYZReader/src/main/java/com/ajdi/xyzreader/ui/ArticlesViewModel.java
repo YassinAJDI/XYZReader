@@ -1,10 +1,10 @@
-package com.example.xyzreader.ui;
+package com.ajdi.xyzreader.ui;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.xyzreader.data.ArticlesRepository;
-import com.example.xyzreader.data.model.Article;
+import com.ajdi.xyzreader.data.ArticlesRepository;
+import com.ajdi.xyzreader.data.model.Article;
 
 import java.util.List;
 

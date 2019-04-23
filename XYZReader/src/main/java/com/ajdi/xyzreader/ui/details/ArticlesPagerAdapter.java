@@ -1,4 +1,4 @@
-package com.example.xyzreader.ui.details;
+package com.ajdi.xyzreader.ui.details;
 
 import android.view.ViewGroup;
 
@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.example.xyzreader.data.model.Article;
+import com.ajdi.xyzreader.data.model.Article;
 
 import java.util.List;
 

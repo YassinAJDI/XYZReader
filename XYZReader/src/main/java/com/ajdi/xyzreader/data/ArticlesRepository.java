@@ -1,8 +1,8 @@
-package com.example.xyzreader.data;
+package com.ajdi.xyzreader.data;
 
-import com.example.xyzreader.data.model.Article;
-import com.example.xyzreader.remote.ArticleService;
-import com.example.xyzreader.utils.AppExecutors;
+import com.ajdi.xyzreader.data.model.Article;
+import com.ajdi.xyzreader.remote.ArticleService;
+import com.ajdi.xyzreader.utils.AppExecutors;
 
 import java.util.Collections;
 import java.util.List;

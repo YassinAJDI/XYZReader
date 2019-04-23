@@ -1,11 +1,11 @@
-package com.example.xyzreader.utils;
+package com.ajdi.xyzreader.utils;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.xyzreader.data.ArticlesRepository;
-import com.example.xyzreader.ui.ArticlesViewModel;
+import com.ajdi.xyzreader.data.ArticlesRepository;
+import com.ajdi.xyzreader.ui.ArticlesViewModel;
 
 /**
  * @author Yassin Ajdi

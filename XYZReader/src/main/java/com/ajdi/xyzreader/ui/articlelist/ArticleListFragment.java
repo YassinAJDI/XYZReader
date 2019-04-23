@@ -1,4 +1,4 @@
-package com.example.xyzreader.ui.articlelist;
+package com.ajdi.xyzreader.ui.articlelist;
 
 
 import android.os.Build;
@@ -21,13 +21,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.transition.TransitionInflater;
 
-import com.example.xyzreader.R;
-import com.example.xyzreader.data.model.Article;
-import com.example.xyzreader.databinding.FragmentArticleListBinding;
-import com.example.xyzreader.ui.ArticlesViewModel;
-import com.example.xyzreader.ui.HomeActivity;
-import com.example.xyzreader.ui.details.ArticlesPagerFragment;
-import com.example.xyzreader.utils.ItemOffsetDecoration;
+import com.ajdi.xyzreader.R;
+import com.ajdi.xyzreader.data.model.Article;
+import com.ajdi.xyzreader.databinding.FragmentArticleListBinding;
+import com.ajdi.xyzreader.ui.ArticlesViewModel;
+import com.ajdi.xyzreader.ui.HomeActivity;
+import com.ajdi.xyzreader.ui.details.ArticlesPagerFragment;
+import com.ajdi.xyzreader.utils.ItemOffsetDecoration;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
+
+;
 
 
 /**
