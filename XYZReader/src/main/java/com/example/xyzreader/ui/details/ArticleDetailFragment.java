@@ -73,14 +73,6 @@ public class ArticleDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            // make window fullscreen
-//            getActivity().getWindow().getDecorView().setSystemUiVisibility(
-//                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-//                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-//
-//        }
-
         if (getArguments().containsKey(ARG_ARTICLE_DATA)) {
             mArticle = getArguments().getParcelable(ARG_ARTICLE_DATA);
         }
@@ -100,9 +92,7 @@ public class ArticleDetailFragment extends Fragment {
         mBinding = FragmentArticleDetailBinding.inflate(inflater, container, false);
         // Article picture shared transition
         ViewCompat.setTransitionName(mBinding.photo, String.valueOf(mArticle.getId()));
-//        mBinding.getRoot().setSystemUiVisibility(
-//                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-//                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+
         return mBinding.getRoot();
     }
 
@@ -127,19 +117,25 @@ public class ArticleDetailFragment extends Fragment {
     }
 
     private void insetLayout() {
-        // inset the toolbar down by the status bar height
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             final CoordinatorLayout coordinatorLayout = mBinding.drawInsetsFrameLayout;
             ViewCompat.setOnApplyWindowInsetsListener(coordinatorLayout, new OnApplyWindowInsetsListener() {
                 @Override
                 public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
                     Timber.d("onApplyWindowInsets");
+                    // apply insets for toolbar. inset the toolbar down by the status bar height
                     ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) mBinding.toolbar.getLayoutParams();
                     lpToolbar.topMargin = insets.getSystemWindowInsetTop();
                     mBinding.toolbar.setLayoutParams(lpToolbar);
+
+                    // apply insets for fab button
+                    ViewGroup.MarginLayoutParams fabLayoutParams = (ViewGroup.MarginLayoutParams) mBinding.shareFab.getLayoutParams();
+                    fabLayoutParams.bottomMargin += insets.getSystemWindowInsetBottom(); // portrait
+                    fabLayoutParams.rightMargin += insets.getSystemWindowInsetRight(); // landscape
+
                     // clear this listener so insets aren't re-applied
                     v.setOnApplyWindowInsetsListener(null);
-                    return insets;
+                    return insets.consumeSystemWindowInsets();
                 }
             });
             ViewCompat.requestApplyInsets(coordinatorLayout);
@@ -155,7 +151,6 @@ public class ArticleDetailFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-//        insetLayout();
         Timber.d("onStart");
     }
 
@@ -163,7 +158,6 @@ public class ArticleDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Timber.d("onResume");
-
     }
 
     @Override

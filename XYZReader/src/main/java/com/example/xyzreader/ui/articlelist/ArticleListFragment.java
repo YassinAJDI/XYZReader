@@ -89,23 +89,24 @@ public class ArticleListFragment extends Fragment {
     }
 
     private void insetLayout() {
-        // inset the toolbar down by the status bar height
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             mBinding.coordinator.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
                 @Override
                 public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
                     Timber.d("onApplyWindowInsets");
-                    // inset status bar
+                    // inset toolbar by status bar height
                     ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams)
                             mBinding.toolbar.getLayoutParams();
                     lpToolbar.topMargin = insets.getSystemWindowInsetTop();
                     mBinding.toolbar.setLayoutParams(lpToolbar);
+
                     // inset the recyclerview bottom by the navigation bar
                     mBinding.recyclerView.setPadding(
                             mBinding.recyclerView.getPaddingLeft() + insets.getSystemWindowInsetLeft(), // landscape
                             mBinding.recyclerView.getPaddingTop(),
                             mBinding.recyclerView.getPaddingRight() + insets.getSystemWindowInsetRight(), // landscape
                             mBinding.recyclerView.getPaddingBottom() + insets.getSystemWindowInsetBottom());
+
                     // clear this listener so insets aren't re-applied
                     v.setOnApplyWindowInsetsListener(null);
                     return insets.consumeSystemWindowInsets();
