@@ -1,6 +1,5 @@
 package com.ajdi.xyzreader.ui.articlelist;
 
-
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -36,9 +35,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
-
-;
-
 
 /**
  * A simple {@link Fragment} subclass, representing a list of Articles. This fragment has different
