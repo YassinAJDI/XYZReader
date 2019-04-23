@@ -258,6 +258,7 @@ public class ArticleDetailFragment extends Fragment {
                                 if (swatch != null) {
                                     mBinding.metaBar.setBackgroundColor(swatch.getRgb());
                                     mBinding.collapsingToolbar.setContentScrimColor(swatch.getRgb());
+                                    mBinding.cardContentContainer.setStrokeColor(swatch.getRgb());
                                 }
                             }
                         });

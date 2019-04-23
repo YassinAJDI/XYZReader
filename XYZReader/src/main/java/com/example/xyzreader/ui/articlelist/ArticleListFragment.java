@@ -29,6 +29,7 @@ import com.example.xyzreader.databinding.FragmentArticleListBinding;
 import com.example.xyzreader.ui.ArticlesViewModel;
 import com.example.xyzreader.ui.HomeActivity;
 import com.example.xyzreader.ui.details.ArticlesPagerFragment;
+import com.example.xyzreader.utils.ItemOffsetDecoration;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -64,7 +65,6 @@ public class ArticleListFragment extends Fragment {
         FragmentManager.enableDebugLogging(true);
         // Inflate the layout for this fragment
         mBinding = FragmentArticleListBinding.inflate(inflater, container, false);
-//        mBinding.coordinator.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mViewModel = HomeActivity.obtainViewModel(getActivity());
         prepareTransitions();
         setupListAdapter();
@@ -75,9 +75,9 @@ public class ArticleListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        if (savedInstanceState == null) {
-//            updateRefreshingUI(true);
-//        }
+        if (savedInstanceState == null) {
+            updateRefreshingUI(true);
+        }
 
         scrollToPosition();
     }
@@ -174,6 +174,8 @@ public class ArticleListFragment extends Fragment {
         StaggeredGridLayoutManager sglm =
                 new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(sglm);
+        ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(getActivity(), R.dimen.item_offset);
+        recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setAdapter(adapter);
 
         // observe articles list LiveData
@@ -186,7 +188,6 @@ public class ArticleListFragment extends Fragment {
                     updateRefreshingUI(false);
                     adapter.submitList(articles);
                 }
-//                Timber.d("getArticlesListLiveData");
             }
         });
     }
