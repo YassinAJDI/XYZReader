@@ -14,13 +14,11 @@ import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.navigation.fragment.FragmentNavigator;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.transition.TransitionInflater;
 
 import com.example.xyzreader.R;
@@ -50,7 +48,6 @@ public class ArticleListFragment extends Fragment {
 
     private ArticlesViewModel mViewModel;
     private FragmentArticleListBinding mBinding;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private AtomicBoolean enterTransitionStarted;
 
     public ArticleListFragment() {
@@ -60,9 +57,8 @@ public class ArticleListFragment extends Fragment {
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Timber.d("onCreateView");
         // Enable FragmentManager logging
-        FragmentManager.enableDebugLogging(true);
+//        FragmentManager.enableDebugLogging(true);
         // Inflate the layout for this fragment
         mBinding = FragmentArticleListBinding.inflate(inflater, container, false);
         mViewModel = HomeActivity.obtainViewModel(getActivity());
@@ -78,7 +74,6 @@ public class ArticleListFragment extends Fragment {
         if (savedInstanceState == null) {
             updateRefreshingUI(true);
         }
-
         scrollToPosition();
     }
 
@@ -93,7 +88,6 @@ public class ArticleListFragment extends Fragment {
             mBinding.coordinator.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
                 @Override
                 public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-                    Timber.d("onApplyWindowInsets");
                     // inset toolbar by status bar height
                     ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams)
                             mBinding.toolbar.getLayoutParams();
@@ -124,16 +118,13 @@ public class ArticleListFragment extends Fragment {
                 final RecyclerView.LayoutManager layoutManager = mBinding.recyclerView.getLayoutManager();
                 View viewAtPosition = layoutManager.findViewByPosition(mViewModel.getCurrentSelectedPosition());
                 // Scroll to position if the view for the current position is null (not currently part of
-                // layout manager children), or it's not completely visible.
-//                boolean isPartiallyVisible = ;
-//                boolean isFullyVisible = ;
+                // layout manager children), or it's not completely visible
                 if (viewAtPosition == null
                         || !(layoutManager.isViewPartiallyVisible(viewAtPosition, false, true)
                         || layoutManager.isViewPartiallyVisible(viewAtPosition, true, true))) {
                     mBinding.recyclerView.post(new Runnable() {
                         @Override
                         public void run() {
-//                            Timber.d("post animation");
                             layoutManager.scrollToPosition(mViewModel.getCurrentSelectedPosition());
                         }
                     });
@@ -193,7 +184,7 @@ public class ArticleListFragment extends Fragment {
     }
 
     private void updateRefreshingUI(boolean isRefreshing) {
-//        mSwipeRefreshLayout.setRefreshing(isRefreshing);
+        mBinding.swipeRefreshLayout.setRefreshing(isRefreshing);
     }
 
     public interface ArticleItemsClickListener {
@@ -221,16 +212,12 @@ public class ArticleListFragment extends Fragment {
 
         @Override
         public void onLoadCompleted(int position) {
-//            Timber.d("onLoadCompleted");
-//            Timber.d("enterTransitionStarted: " + enterTransitionStarted);
             // Call startPostponedEnterTransition only when the 'selected' image loading is completed.
             int selectedPosition = mViewModel.getCurrentSelectedPosition();
             if (selectedPosition != position) {
-//                Timber.d("current selected pos= " + selectedPosition + ". adapter pos= " + position);
                 return;
             }
             if (enterTransitionStarted.getAndSet(true)) {
-//                Timber.d("transation already started");
                 return;
             }
             scheduleStartPostponedTransition();
@@ -238,13 +225,11 @@ public class ArticleListFragment extends Fragment {
     };
 
     private void scheduleStartPostponedTransition() {
-//        Timber.d("scheduleStartPostponedTransition");
         mBinding.recyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 mBinding.recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
                 startPostponedEnterTransition();
-//                Timber.d("startPostponedEnterTransition");
                 return true;
             }
         });

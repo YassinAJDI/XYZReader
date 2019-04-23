@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import timber.log.Timber;
-
 /**
  * @author Yassin Ajdi
  * @since 4/16/2019.
@@ -38,17 +36,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticleViewHolder> {
         holder.bindTo(mArticleList.get(position));
     }
 
-//    private Date parsePublishedDate() {
-//        try {
-//            String date = mCursor.getString(ArticleLoader.Query.PUBLISHED_DATE);
-//            return dateFormat.parse(date);
-//        } catch (ParseException ex) {
-//            Log.e(TAG, ex.getMessage());
-//            Log.i(TAG, "passing today's date");
-//            return new Date();
-//        }
-//    }
-
     @Override
     public int getItemCount() {
         return mArticleList != null ? mArticleList.size() : 0;
@@ -56,7 +43,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticleViewHolder> {
 
 
     public void submitList(List<Article> articles) {
-        Timber.d("data changed rebind viewholders");
         mArticleList = articles;
         notifyDataSetChanged();
     }

@@ -73,9 +73,9 @@
 
                     <TextView
                         android:id="@+id/article_byline"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                         android:textColor="#8fff" />
                 </LinearLayout>
 
@@ -88,7 +88,7 @@
                     android:fontFamily="sans-serif"
                     android:paddingBottom="@dimen/detail_body_bottom_margin"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    android:textColorLink="@color/theme_accent"
+                    android:textColorLink="@color/colorAccent"
                     tools:text="some text. more text.... etc" />
 
             </LinearLayout>
@@ -102,7 +102,8 @@
             android:layout_marginEnd="@dimen/fab_margin"
             android:layout_marginBottom="@dimen/fab_margin"
             android:contentDescription="@string/action_share"
-            android:src="@drawable/ic_share" />
+            android:src="@drawable/ic_share"
+            app:elevation="6dp" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

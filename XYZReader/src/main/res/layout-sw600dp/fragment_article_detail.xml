@@ -18,7 +18,6 @@
                 android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:contentScrim="?attr/colorPrimary"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <ImageView
@@ -97,7 +96,7 @@
                         android:layout_marginBottom="@dimen/detail_inner_horiz_margin"
                         android:fontFamily="sans-serif"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                        android:textColorLink="@color/theme_accent"
+                        android:textColorLink="@color/colorAccent"
                         tools:text="some text. more text.... etc" />
 
                 </LinearLayout>

@@ -51,7 +51,6 @@ public class ArticleDetailFragment extends Fragment {
 
     private FragmentArticleDetailBinding mBinding;
     private Article mArticle;
-    private boolean mIsCard = false;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -71,13 +70,9 @@ public class ArticleDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Timber.d("onCreate");
-
         if (getArguments().containsKey(ARG_ARTICLE_DATA)) {
             mArticle = getArguments().getParcelable(ARG_ARTICLE_DATA);
         }
-
-        mIsCard = getResources().getBoolean(R.bool.detail_is_card);
         setHasOptionsMenu(true);
     }
 
@@ -99,7 +94,6 @@ public class ArticleDetailFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Timber.d("onViewCreated");
         // Sharing fab button
         mBinding.shareFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +116,6 @@ public class ArticleDetailFragment extends Fragment {
             ViewCompat.setOnApplyWindowInsetsListener(coordinatorLayout, new OnApplyWindowInsetsListener() {
                 @Override
                 public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-                    Timber.d("onApplyWindowInsets");
                     // apply insets for toolbar. inset the toolbar down by the status bar height
                     ViewGroup.MarginLayoutParams lpToolbar = (ViewGroup.MarginLayoutParams) mBinding.toolbar.getLayoutParams();
                     lpToolbar.topMargin = insets.getSystemWindowInsetTop();
@@ -142,56 +135,17 @@ public class ArticleDetailFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Timber.d("onActivityCreated");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Timber.d("onStart");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Timber.d("onResume");
-    }
-
-    @Override
-    public void onDestroyView() {
-        Timber.d("onDestroyView");
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        Timber.d("onDestroy");
-        super.onDestroy();
-    }
-
-    @Override
-    public void onDetach() {
-        Timber.d("onDetach");
-        super.onDetach();
-    }
-
     private void setupToolbar() {
-        Timber.d("setupToolbar");
         final Toolbar toolbar = mBinding.toolbar;
         getActivityCast().setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Timber.d("Navigation Up Click");
                 NavHostFragment.findNavController(ArticleDetailFragment.this).navigateUp();
             }
         });
 
         if (getActivityCast().getSupportActionBar() != null) {
-            Timber.d("Has toolbar");
             getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             handleCollapsedToolbarTitle();
         }
@@ -238,7 +192,6 @@ public class ArticleDetailFragment extends Fragment {
                 .asBitmap()
                 .load(mArticle.getPhoto_url())
                 .dontAnimate()
-                .dontTransform()
                 .placeholder(R.color.photo_placeholder)
                 .listener(new RequestListener<Bitmap>() {
                     @Override
@@ -258,7 +211,9 @@ public class ArticleDetailFragment extends Fragment {
                                 if (swatch != null) {
                                     mBinding.metaBar.setBackgroundColor(swatch.getRgb());
                                     mBinding.collapsingToolbar.setContentScrimColor(swatch.getRgb());
-                                    mBinding.cardContentContainer.setStrokeColor(swatch.getRgb());
+                                    if (mBinding.cardContentContainer != null) {
+                                        mBinding.cardContentContainer.setStrokeColor(swatch.getRgb());
+                                    }
                                 }
                             }
                         });

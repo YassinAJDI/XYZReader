@@ -6,6 +6,7 @@
         android:id="@+id/article_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardElevation="1dp"
         android:clickable="true"
         android:focusable="true"
         app:cardCornerRadius="8dp"
