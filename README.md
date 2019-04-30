@@ -1,10 +1,12 @@
 # XYZReader
 
+![GIF](screenshots/demo1.gif?raw=true)
+
 ## Screenshots
 
 | Main Screen | List |  Article Details |
 |:-:|:-:|:-:|
-| ![First](screenshots/Screenshot_1.png?raw=true) | ![Sec](screenshots/Screenshot_2.png?raw=true) | ![Sec](screenshots/Screenshot_5.png?raw=true) |
+| ![First](screenshots/screenshot_1.jpg?raw=true) | ![Sec](screenshots/screenshot_2.jpg?raw=true) | ![Sec](screenshots/Screenshot_3.jpg?raw=true) |
 
 ## Project Overview
 In this project, you will redesign an app to follow the Material Design guidelines and translate a set of static design mocks to a living 
